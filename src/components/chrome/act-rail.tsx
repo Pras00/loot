@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { ACTS } from '@/lib/content/copy';
 import { scrollToChapter, subscribeActiveAct } from '@/lib/scroll/engine';
 
-const LIGHT_ACTS = new Set<string>(['flow', 'spec']);
+const LIGHT_ACTS = new Set<string>(['anatomy', 'flow', 'spec']);
 
 export function ActRail() {
   const [active, setActive] = useState<string>('origin');

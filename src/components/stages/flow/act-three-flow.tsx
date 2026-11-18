@@ -1,66 +1,44 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
-import { FLOW, RECEIPT } from '@/lib/content/copy';
+import { LootCard } from '@/components/card/loot-card';
+import { FLOW } from '@/lib/content/copy';
 import { useStage } from '@/lib/scroll/use-stage';
-import { formatIdr, formatIdrCompact } from '@/lib/treasury/format';
-import {
-  RULE_PRESETS,
-  SCENARIO,
-  VAULT_LEDGER,
-  VAULT_RULES,
-  type VaultId,
-} from '@/lib/treasury/rules';
-import { splitSpend } from '@/lib/treasury/split';
 
 import { flowChoreography } from './choreography';
 
-const ROW_CENTERS_Y = [50, 150, 250, 350] as const;
-
-const SEGMENT_TONES = [
-  'bg-signal',
-  'bg-ultraviolet-500',
-  'bg-alabaster-50',
-  'bg-alabaster-50/45',
+const CONSTRUCTION_STEPS = [
+  {
+    idx: '01',
+    title: 'One angle, 23.6°',
+    body: 'Every proportion on the card turns on a single 23.6° geometric axis.',
+    varName: 'var(--step-0)',
+  },
+  {
+    idx: '02',
+    title: 'Woven into four pockets',
+    body: 'Fine internal pathways connect your single tap to four isolated pocket registers.',
+    varName: 'var(--step-1)',
+  },
+  {
+    idx: '03',
+    title: 'Drawn, then milled in metal',
+    body: 'The lines solidify into 6.1 grams of 0.78 mm anodized aluminium that works offline.',
+    varName: 'var(--step-2)',
+  },
 ] as const;
 
-const strokeWidthFor = (sharePct: number): number =>
-  Number((1.6 + (sharePct / 45) * 1.8).toFixed(2));
+const THREAD_Y_OFFSETS = [-110, -75, -40, 0, 40, 75, 110] as const;
 
+/**
+ * Section 3 — "The card, constructed." (`dennypratama.com` Section 3 style:
+ * geometric construction threads, 23.6° datum lines, and vertex callouts weave
+ * together on scroll and solidify into the finished LOOT card).
+ */
 export function ActThreeFlow() {
   const sectionRef = useRef<HTMLElement | null>(null);
   useStage(sectionRef, flowChoreography);
-  const [selectedVault, setSelectedVault] = useState<VaultId>('ops');
-
-  const split = splitSpend(SCENARIO.amountIdr);
-
-  const rows = VAULT_RULES.map((rule, index) => {
-    const line = split.lines.find((candidate) => candidate.id === rule.id);
-    const meta = VAULT_LEDGER[rule.id];
-    const deltaIdr = line?.amountIdr ?? 0;
-    const settledIdr = meta.startingBalanceIdr + deltaIdr;
-    return {
-      ...rule,
-      deltaIdr,
-      startingBalanceIdr: meta.startingBalanceIdr,
-      settledIdr,
-      action: meta.action,
-      targetY: ROW_CENTERS_Y[index] ?? 200,
-    };
-  });
-
-  const firstRule = VAULT_RULES[0];
-  const firstMeta = VAULT_LEDGER[firstRule.id];
-  const activeRow = rows.find((row) => row.id === selectedVault) ??
-    rows[0] ?? {
-      ...firstRule,
-      deltaIdr: 0,
-      startingBalanceIdr: firstMeta.startingBalanceIdr,
-      settledIdr: firstMeta.startingBalanceIdr,
-      action: firstMeta.action,
-      targetY: ROW_CENTERS_Y[0],
-    };
 
   return (
     <section
@@ -71,364 +49,192 @@ export function ActThreeFlow() {
     >
       <div className="sticky top-0 h-svh overflow-hidden" style={{ opacity: 'var(--stage-o, 0)' }}>
         <div
-          className="anatomy-iris pointer-events-auto relative h-full w-full bg-canvas"
+          className="pointer-events-auto relative h-full w-full bg-alabaster-100"
           style={{
-            clipPath: 'circle(calc(var(--iris, 0) * 145%) at var(--iris-x) var(--iris-y))',
+            clipPath: 'inset(calc((1 - var(--reveal, 0)) * 100%) 0 0 0)',
           }}
         >
-          <div aria-hidden className="blueprint pointer-events-none absolute inset-0 opacity-60" />
+          <div aria-hidden className="blueprint pointer-events-none absolute inset-0 opacity-45" />
 
-          <div className="relative z-10 flex h-full flex-col justify-between px-5 pb-5 pt-14 md:hidden">
-            <header style={{ opacity: 'var(--type-o)' }}>
-              <span className="inline-block rounded-full bg-charcoal-900 px-3 py-0.5 text-micro font-semibold text-signal">
-                Automatic pocket updates
-              </span>
-              <h2 className="mt-2 text-title text-balance">{FLOW.title}</h2>
-              <p className="mt-1 text-micro text-ink-secondary">{FLOW.lead}</p>
-            </header>
-
-            <div
-              className="flex items-center justify-between rounded-card border border-charcoal-700 bg-charcoal-900 px-4 py-3 text-alabaster-50"
-              style={{ opacity: 'var(--source)' }}
-            >
-              <div>
-                <p className="text-micro text-alabaster-50/70">{SCENARIO.merchant}</p>
-                <span className="mt-1 inline-block rounded-full bg-signal px-2.5 py-0.5 text-micro font-semibold text-ink">
-                  {RECEIPT.approved} in 0.4 s
-                </span>
-              </div>
-              <p className="tabular text-title font-bold text-alabaster-50">
-                {formatIdr(split.totalIdr)}
-              </p>
-            </div>
-
-            <ol className="divide-y divide-hairline overflow-hidden rounded-card border border-ink/15 bg-alabaster-100">
-              {rows.map((row, index) => {
-                const isSelected = row.id === selectedVault;
-                return (
-                  <li
-                    key={row.id}
-                    style={{
-                      opacity: `var(--row-${index})`,
-                      transform: `translate3d(0, calc((1 - var(--row-${index})) * 0.5rem), 0)`,
-                    }}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => setSelectedVault(row.id)}
-                      aria-pressed={isSelected}
-                      className={`w-full border-l-4 px-3.5 py-2.5 text-left transition-colors duration-200 ${
-                        isSelected
-                          ? 'border-l-ultraviolet-500 bg-alabaster-50'
-                          : 'border-l-transparent bg-alabaster-100'
-                      }`}
-                    >
-                      <div className="flex items-baseline justify-between gap-2">
-                        <span className="text-body-sm font-semibold text-ink-primary">
-                          {row.label}
-                          <span className="ml-2 text-micro font-normal text-ink-muted">
-                            ({row.sharePct}%)
-                          </span>
-                        </span>
-                        <div className="flex items-baseline gap-2">
-                          <span className="rounded-full bg-signal px-2 py-0.5 text-micro font-semibold text-ink">
-                            +{formatIdrCompact(row.deltaIdr)}
-                          </span>
-                          <span
-                            className="tabular text-body-sm font-bold text-ink-primary"
-                            style={{ opacity: `var(--figure-${index})` }}
-                          >
-                            {formatIdr(row.settledIdr)}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="mt-1.5 h-1 w-full rounded-full bg-hairline">
-                        <span
-                          className={`block h-full origin-left rounded-full ${
-                            isSelected ? 'bg-ultraviolet-500' : 'bg-ink'
-                          }`}
-                          style={{
-                            width: `${row.sharePct}%`,
-                            transform: `scaleX(var(--branch-${index}))`,
-                          }}
-                        />
-                      </div>
-                    </button>
-                  </li>
-                );
-              })}
-            </ol>
-
-            <p className="rounded-card bg-charcoal-900 px-3.5 py-2.5 tabular text-micro text-alabaster-50">
-              <span className="font-semibold text-signal">{activeRow.label} pocket:</span>{' '}
-              {formatIdr(activeRow.startingBalanceIdr)} + {formatIdrCompact(activeRow.deltaIdr)} ={' '}
-              <span className="font-semibold">{formatIdr(activeRow.settledIdr)}</span>
-            </p>
-          </div>
-
-          <div className="relative z-10 mx-auto hidden h-full max-w-6xl flex-col justify-between px-10 pb-7 pt-8 md:flex">
+          <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-between px-6 pb-8 pt-10 sm:px-12 sm:pb-10 sm:pt-12">
+            {/* Top Editorial Header */}
             <header
-              className="grid grid-cols-12 items-end gap-8 border-b border-ink/15 pb-4"
+              className="grid grid-cols-1 items-end gap-6 md:grid-cols-12 md:gap-8"
               style={{ opacity: 'var(--type-o)' }}
             >
-              <div className="col-span-7">
-                <div className="flex items-center gap-3">
-                  <span className="rounded-full bg-charcoal-900 px-3 py-1 text-micro font-semibold text-signal">
-                    How your money flows
-                  </span>
-                  <span className="text-micro font-medium text-ink-secondary">
-                    One tap updates every pocket at the same time
-                  </span>
-                </div>
-                <h2 id="flow-title" className="mt-2.5 text-display-md text-balance">
+              <div className="md:col-span-7">
+                <h2 id="flow-title" className="text-display-lg text-ink-primary">
                   {FLOW.title}
                 </h2>
-                <p className="mt-1.5 text-body-sm text-ink-secondary">{FLOW.lead}</p>
               </div>
-
-              <dl className="col-span-5 grid grid-cols-3 divide-x divide-ink/10 overflow-hidden rounded-card border border-ink/15 bg-alabaster-100">
-                <div className="p-3.5">
-                  <dt className="text-micro text-ink-muted">One payment</dt>
-                  <dd className="tabular mt-1 text-body-sm font-bold text-ink-primary">
-                    {formatIdr(split.totalIdr)}
-                  </dd>
-                </div>
-                <div className="p-3.5">
-                  <dt className="text-micro text-ink-muted">Sorting speed</dt>
-                  <dd className="mt-1 text-body-sm font-bold text-ultraviolet-600">
-                    Instant (0.4 s)
-                  </dd>
-                </div>
-                <div className="p-3.5">
-                  <dt className="text-micro text-ink-muted">Left unsorted</dt>
-                  <dd className="tabular mt-1 text-body-sm font-bold text-ink-primary">
-                    Rp 0
-                  </dd>
-                </div>
-              </dl>
+              <div className="md:col-span-5">
+                <p className="text-body-sm text-ink-secondary">{FLOW.lead}</p>
+              </div>
             </header>
 
-            <div className="my-auto grid grid-cols-12 items-stretch py-2">
-              <div
-                className="col-span-4 flex items-center"
-                style={{
-                  opacity: 'var(--source)',
-                  transform: 'translate3d(calc((1 - var(--source)) * -1rem), 0, 0)',
-                }}
-              >
-                <div className="w-full overflow-hidden rounded-panel border border-charcoal-700 bg-charcoal-900 p-5 text-alabaster-50 shadow-paper lg:p-6">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-micro font-medium text-alabaster-50/75">
-                      One payment at the counter
-                    </span>
-                    <span className="rounded-full bg-signal px-2.5 py-0.5 text-micro font-semibold text-ink">
-                      {RECEIPT.approved} in 0.4 s
-                    </span>
-                  </div>
-
-                  <p className="mt-3 text-body-sm text-alabaster-50/80">{SCENARIO.merchant}</p>
-                  <p className="tabular mt-1 whitespace-nowrap text-figure font-bold text-alabaster-50">
-                    {formatIdr(split.totalIdr)}
-                  </p>
-
-                  <dl className="mt-5 space-y-2 border-t border-alabaster-50/15 pt-3.5 text-micro">
-                    <div className="flex items-baseline justify-between gap-2">
-                      <dt className="text-alabaster-50/65">Paid with</dt>
-                      <dd className="font-medium text-alabaster-50">LOOT Stealth card</dd>
-                    </div>
-                    <div className="flex items-baseline justify-between gap-2">
-                      <dt className="text-alabaster-50/65">Splitting style</dt>
-                      <dd className="font-semibold text-signal">{RULE_PRESETS[0].name}</dd>
-                    </div>
-                    <div className="flex items-baseline justify-between gap-2">
-                      <dt className="text-alabaster-50/65">Where it goes</dt>
-                      <dd className="font-medium text-alabaster-50">4 money pockets</dd>
-                    </div>
-                  </dl>
-
-                  <div className="mt-4">
-                    <div className="flex items-baseline justify-between text-micro text-alabaster-50/65">
-                      <span>How the bill is shared</span>
-                      <span className="tabular font-medium text-signal">20% / 45% / 25% / 10%</span>
-                    </div>
-                    <div className="mt-1.5 flex h-1.5 w-full gap-0.5 overflow-hidden rounded-full bg-charcoal-800">
-                      {VAULT_RULES.map((rule, index) => (
-                        <span
-                          key={rule.id}
-                          className={`block h-full ${SEGMENT_TONES[index] ?? 'bg-alabaster-50'}`}
-                          style={{ width: `${rule.sharePct}%` }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-span-1 relative">
+            {/* Center Geometric Thread Construction & Solidification Stage */}
+            <div className="relative my-auto flex items-center justify-center py-4">
+              <div className="relative flex w-full max-w-4xl items-center justify-center">
                 <svg
-                  viewBox="0 0 200 400"
-                  preserveAspectRatio="none"
-                  className="pointer-events-none absolute inset-0 size-full text-ink"
+                  viewBox="0 0 880 420"
+                  className="w-full overflow-visible text-ink"
                   fill="none"
                   aria-hidden="true"
                 >
-                  <circle
-                    cx="4"
-                    cy="200"
-                    r="5"
-                    fill="var(--color-signal-400)"
-                    stroke="var(--color-ink)"
-                    strokeWidth="1.5"
-                    style={{ opacity: 'var(--source)' }}
-                  />
-                  {rows.map((row, index) => {
-                    const path = `M 0 200 C 105 200, 95 ${row.targetY}, 200 ${row.targetY}`;
-                    const width = strokeWidthFor(row.sharePct);
-                    const isSelected = row.id === selectedVault;
+                  {/* Phase 1: Architectural Construction Axes & 23.6° Slash Guides */}
+                  <g style={{ opacity: 'var(--grid-d)' }}>
+                    <line
+                      x1="60"
+                      y1="210"
+                      x2="820"
+                      y2="210"
+                      stroke="currentColor"
+                      strokeOpacity={0.18}
+                      strokeDasharray="4 4"
+                    />
+                    <line
+                      x1="440"
+                      y1="20"
+                      x2="440"
+                      y2="400"
+                      stroke="currentColor"
+                      strokeOpacity={0.18}
+                      strokeDasharray="4 4"
+                    />
+                    {/* 23.6° Diagonal Construction Axis */}
+                    <line
+                      x1="348"
+                      y1="400"
+                      x2="532"
+                      y2="20"
+                      stroke="var(--color-ultraviolet-500)"
+                      strokeOpacity={0.75}
+                      strokeWidth={1.25}
+                      pathLength={1}
+                      strokeDasharray={1}
+                      style={{ strokeDashoffset: 'calc(1 - var(--grid-d))' }}
+                    />
+                    <circle
+                      cx="440"
+                      cy="210"
+                      r="156"
+                      stroke="currentColor"
+                      strokeOpacity={0.16}
+                      pathLength={1}
+                      strokeDasharray={1}
+                      style={{ strokeDashoffset: 'calc(1 - var(--grid-d))' }}
+                    />
+                    <text x="542" y="42" fill="var(--color-ultraviolet-600)" fontSize="12">
+                      23.6° axis
+                    </text>
+                    <text x="642" y="96" fill="currentColor" fillOpacity={0.5} fontSize="12">
+                      85.60 × 53.98 mm
+                    </text>
+                    <text x="150" y="346" fill="currentColor" fillOpacity={0.5} fontSize="12">
+                      r = 3.18 mm
+                    </text>
+                  </g>
+
+                  {/* Phase 2: Converging Curved Threads Weaving the Card & Double-Loop Emblem */}
+                  {THREAD_Y_OFFSETS.map((offset, index) => {
+                    const startY = 210 + offset * 1.45;
+                    const midY = 210 + offset * 0.35;
+                    const endY = 210 - offset * 1.45;
+                    const isAccent = index === 2 || index === 4;
                     return (
-                      <g key={row.id}>
-                        <path
-                          d={path}
-                          stroke="currentColor"
-                          strokeOpacity={0.14}
-                          strokeWidth={width}
-                          vectorEffect="non-scaling-stroke"
-                        />
-                        <path
-                          d={path}
-                          stroke={
-                            isSelected ? 'var(--color-ultraviolet-500)' : 'var(--color-ink)'
-                          }
-                          strokeOpacity={isSelected ? 1 : 0.45}
-                          strokeWidth={isSelected ? width + 0.8 : width}
-                          vectorEffect="non-scaling-stroke"
-                          pathLength={1}
-                          strokeDasharray={1}
-                          style={{
-                            strokeDashoffset: `calc(1 - var(--branch-${index}))`,
-                            transition: 'stroke-opacity 200ms var(--ease-loot)',
-                          }}
-                        />
-                        <circle
-                          cx="196"
-                          cy={row.targetY}
-                          r={isSelected ? 4.5 : 3}
-                          fill={
-                            isSelected
-                              ? 'var(--color-signal-400)'
-                              : 'var(--color-ultraviolet-500)'
-                          }
-                          stroke="var(--color-ink)"
-                          strokeWidth="1"
-                          style={{ opacity: `var(--branch-${index})` }}
-                        />
-                      </g>
+                      <path
+                        key={offset}
+                        d={`M 40 ${startY} C 230 ${startY}, 310 ${midY}, 440 210 C 570 ${midY}, 650 ${endY}, 840 ${endY}`}
+                        stroke={
+                          isAccent
+                            ? 'var(--color-ultraviolet-500)'
+                            : index === 3
+                              ? 'var(--color-signal-600)'
+                              : 'currentColor'
+                        }
+                        strokeOpacity={isAccent || index === 3 ? 0.65 : 0.22}
+                        strokeWidth={index === 3 ? 1.8 : 1.1}
+                        pathLength={1}
+                        strokeDasharray={1}
+                        style={{ strokeDashoffset: 'calc(1 - var(--threads-d))' }}
+                      />
                     );
                   })}
+
+                  {/* Phase 2B: Wireframe Card Outline & Central Double-Loop 8 Geometry */}
+                  <rect
+                    x="220"
+                    y="72"
+                    width="440"
+                    height="276"
+                    rx="22"
+                    stroke="currentColor"
+                    strokeWidth={1.5}
+                    pathLength={1}
+                    strokeDasharray={1}
+                    style={{ strokeDashoffset: 'calc(1 - var(--outline-d))' }}
+                  />
+                  <rect
+                    x="404"
+                    y="128"
+                    width="72"
+                    height="76"
+                    rx="26"
+                    stroke="var(--color-ultraviolet-500)"
+                    strokeWidth={2}
+                    pathLength={1}
+                    strokeDasharray={1}
+                    style={{ strokeDashoffset: 'calc(1 - var(--outline-d))' }}
+                  />
+                  <rect
+                    x="404"
+                    y="216"
+                    width="72"
+                    height="76"
+                    rx="26"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    pathLength={1}
+                    strokeDasharray={1}
+                    style={{ strokeDashoffset: 'calc(1 - var(--outline-d))' }}
+                  />
                 </svg>
-              </div>
 
-              <div className="col-span-7 grid grid-rows-4 divide-y divide-ink/10 overflow-hidden rounded-panel border border-ink/20 bg-alabaster-100 shadow-sheet">
-                {rows.map((row, index) => {
-                  const isSelected = row.id === selectedVault;
-                  return (
-                    <button
-                      key={row.id}
-                      type="button"
-                      onClick={() => setSelectedVault(row.id)}
-                      aria-pressed={isSelected}
-                      className={`group flex flex-col justify-center border-l-4 px-4 py-3 text-left transition-colors duration-200 ease-loot lg:px-5 ${
-                        isSelected
-                          ? 'border-l-ultraviolet-500 bg-alabaster-50'
-                          : 'border-l-transparent bg-alabaster-100 hover:bg-alabaster-50/70'
-                      }`}
-                      style={{
-                        opacity: `var(--row-${index})`,
-                        transform: `translate3d(calc((1 - var(--row-${index})) * 0.75rem), 0, 0)`,
-                      }}
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="flex min-w-0 items-center gap-2.5">
-                          <span className="font-display text-body font-semibold text-ink-primary">
-                            {row.label}
-                          </span>
-                          <span
-                            className={`tabular rounded-full px-2.5 py-0.5 text-micro font-semibold ${
-                              isSelected
-                                ? 'bg-charcoal-900 text-signal'
-                                : 'bg-ink/10 text-ink-secondary'
-                            }`}
-                          >
-                            {row.sharePct}%
-                          </span>
-                          <span className="hidden truncate text-micro text-ink-secondary lg:inline">
-                            {row.action}
-                          </span>
-                        </div>
-
-                        <div className="flex shrink-0 items-center gap-3">
-                          <span className="hidden tabular whitespace-nowrap text-micro text-ink-muted xl:inline">
-                            Before: {formatIdrCompact(row.startingBalanceIdr)}
-                          </span>
-                          <span
-                            className={`tabular whitespace-nowrap rounded-full px-2.5 py-0.5 text-micro font-semibold ${
-                              isSelected
-                                ? 'bg-signal text-ink ring-1 ring-ink/15'
-                                : 'bg-ultraviolet-500/15 text-ultraviolet-600'
-                            }`}
-                            style={{ opacity: `var(--figure-${index})` }}
-                          >
-                            +{formatIdrCompact(row.deltaIdr)} added
-                          </span>
-                          <span
-                            className="tabular whitespace-nowrap text-figure font-bold text-ink-primary"
-                            style={{ opacity: `var(--figure-${index})` }}
-                          >
-                            {formatIdr(row.settledIdr)}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-ink/10">
-                        <span
-                          className={`block h-full origin-left rounded-full ${
-                            isSelected ? 'bg-ultraviolet-500' : 'bg-charcoal-900'
-                          }`}
-                          style={{
-                            width: `${row.sharePct}%`,
-                            transform: `scaleX(var(--branch-${index}))`,
-                          }}
-                        />
-                      </div>
-                    </button>
-                  );
-                })}
+                {/* Phase 3: Solidified Finished Metal Card ("The lines become a solid") */}
+                <div
+                  className="pointer-events-none absolute w-64 sm:w-88 lg:w-100"
+                  style={{
+                    opacity: 'var(--solid-o)',
+                    transform: 'scale(calc(0.92 + var(--solid-o, 0) * 0.08))',
+                  }}
+                >
+                  <LootCard edition="stealth" />
+                </div>
               </div>
             </div>
 
-            <footer
-              className="flex flex-wrap items-center justify-between gap-4 rounded-card border border-charcoal-700 bg-charcoal-900 px-5 py-3.5 text-micro text-alabaster-50"
-              style={{ opacity: 'var(--hold)' }}
-            >
-              <div className="flex items-center gap-3">
-                <span className="rounded-full bg-signal px-2.5 py-0.5 font-semibold text-ink">
-                  Selected pocket
-                </span>
-                <p className="tabular text-alabaster-50">
-                  <span className="font-semibold">{activeRow.label}</span> started at{' '}
-                  {formatIdr(activeRow.startingBalanceIdr)}, received{' '}
-                  <span className="font-semibold text-signal">
-                    +{formatIdrCompact(activeRow.deltaIdr)}
-                  </span>
-                  , and now holds{' '}
-                  <span className="font-bold text-alabaster-50">
-                    {formatIdr(activeRow.settledIdr)}
-                  </span>
-                  .
-                </p>
-              </div>
-              <p className="text-alabaster-50/70">{FLOW.note}</p>
-            </footer>
+            {/* Bottom 3-Column Progress Bar (dennypratama.com construction progress style) */}
+            <ol className="grid grid-cols-1 gap-6 sm:grid-cols-3 sm:gap-8">
+              {CONSTRUCTION_STEPS.map((step) => (
+                <li key={step.idx}>
+                  <div className="h-0.5 w-full bg-ink/12">
+                    <div
+                      className="h-full origin-left bg-ultraviolet-500"
+                      style={{ transform: `scaleX(${step.varName})` }}
+                    />
+                  </div>
+                  <div className="mt-3 flex items-baseline gap-3">
+                    <span className="tabular text-micro text-ink-muted">
+                      <span>{step.idx}</span>
+                      <span className="mx-1">/</span>
+                      <span>03</span>
+                    </span>
+                    <h3 className="text-body font-medium text-ink-primary">{step.title}</h3>
+                  </div>
+                  <p className="mt-1 hidden text-micro text-ink-secondary sm:block">{step.body}</p>
+                </li>
+              ))}
+            </ol>
           </div>
         </div>
       </div>

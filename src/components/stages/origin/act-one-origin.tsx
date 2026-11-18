@@ -1,44 +1,64 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState, type PointerEvent } from 'react';
 
 import { LootCard } from '@/components/card/loot-card';
 import { BrandMark } from '@/components/chrome/brand-mark';
 import { actionClass, ActionLink } from '@/components/ui/action';
-import { HERO, RECEIPT, RULESET } from '@/lib/content/copy';
+import { HERO } from '@/lib/content/copy';
 import { scrollToChapter } from '@/lib/scroll/engine';
+import { clamp } from '@/lib/scroll/math';
 import { useStage } from '@/lib/scroll/use-stage';
-import { formatIdrCompact, formatNumber } from '@/lib/treasury/format';
-import { SCENARIO, VAULT_LEDGER, VAULT_RULES } from '@/lib/treasury/rules';
-import { splitSpend } from '@/lib/treasury/split';
 
 import { originChoreography } from './choreography';
-import { LootTerminal } from './loot-terminal';
-import { Receipt } from './receipt';
 
-const BAR_TONES = [
-  'bg-signal',
-  'bg-ultraviolet-500',
-  'bg-alabaster-50',
-  'bg-alabaster-50/60',
+const TUNNEL_RINGS = [
+  { scale: 1.55, rot: 0, wireframe: false, opacity: 0.92 },
+  { scale: 1.22, rot: -15, wireframe: true, opacity: 0.78 },
+  { scale: 0.94, rot: -30, wireframe: true, opacity: 0.68 },
+  { scale: 0.72, rot: -45, wireframe: false, opacity: 0.58 },
+  { scale: 0.54, rot: -60, wireframe: true, opacity: 0.48 },
+  { scale: 0.38, rot: -75, wireframe: true, opacity: 0.38 },
 ] as const;
 
-const HOW_IT_WORKS_STEPS = [
-  { step: 'Step 1', text: 'Tap your card once to pay the bill' },
-  { step: 'Step 2', text: 'The card divides the amount in 0.4 seconds' },
-  { step: 'Step 3', text: 'All 4 money pockets update automatically' },
+const FRAME_VARS = [
+  'var(--frame-0)',
+  'var(--frame-1)',
+  'var(--frame-2)',
+  'var(--frame-3)',
 ] as const;
 
 /**
- * Act 1 — Origin. Welcoming hero stage followed by a crystal-clear real-world
- * payment example showing how one Rp 480.000 tap is divided into four pockets.
+ * Section 1 — Hero & The Dimensional Dive (`000° -> 145°`).
+ *
+ * Starts with the 23.6° diagonal slash hero (whole LOOT card in the center,
+ * scrubbable 0%–100% from far-left edge to far-right edge). As the user scrolls,
+ * the camera flies through a rotating 3D/wireframe tunnel of the LOOT emblem
+ * while four gigantic `Archivo 300` statements sequence in the bottom-left.
  */
 export function ActOneOrigin() {
   const sectionRef = useRef<HTMLElement | null>(null);
   useStage(sectionRef, originChoreography);
 
-  const split = splitSpend(SCENARIO.amountIdr);
-  const spokenSplit = split.lines.map((line) => `${line.label} ${formatNumber(line.amountIdr)}`);
+  const [slashPct, setSlashPct] = useState(50);
+  const [dragging, setDragging] = useState(false);
+
+  const updateSlashFromPointer = (clientX: number, rect: DOMRect): void => {
+    const pct = clamp(((clientX - rect.left) / rect.width) * 100, 0, 100);
+    setSlashPct(Number(pct.toFixed(1)));
+  };
+
+  const handleHeroPointerMove = (event: PointerEvent<HTMLDivElement>): void => {
+    if (!dragging && event.pointerType !== 'mouse') {
+      return;
+    }
+    updateSlashFromPointer(event.clientX, event.currentTarget.getBoundingClientRect());
+  };
+
+  // Signature 23.6° angle offset across the viewport height, unclamped so 0%..100% sweeps edge-to-edge.
+  const tiltSpan = 21.8;
+  const topX = clamp(slashPct + tiltSpan, 0, 100);
+  const bottomX = clamp(slashPct - tiltSpan, 0, 100);
 
   return (
     <section
@@ -48,18 +68,178 @@ export function ActOneOrigin() {
       className="surface-dark runway-origin relative z-10"
     >
       <div className="sticky top-0 h-svh overflow-hidden">
-        <div aria-hidden className="pointer-events-none absolute inset-0 bg-canvas" />
+        <div aria-hidden className="pointer-events-none absolute inset-0 bg-charcoal-950" />
+
+        {/* 3D & Blueprint Wireframe Tunnel (Rotates 00° -> 145° and zooms on scroll) */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              'radial-gradient(56% 50% at 54% 38%, color-mix(in oklab, var(--color-ultraviolet-500) 30%, transparent), transparent 72%)',
-          }}
-        />
+          className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden"
+          style={{ opacity: 'var(--tunnel-o, 1)' }}
+        >
+          <div
+            className="relative flex size-96 items-center justify-center sm:size-136"
+            style={{
+              transform: 'scale(var(--tunnel-s, 1)) rotate(var(--tunnel-r, 0deg))',
+            }}
+          >
+            {TUNNEL_RINGS.map((ring, idx) => (
+              <svg
+                key={ring.scale}
+                viewBox="-220 -320 440 640"
+                className="absolute inset-0 size-full overflow-visible"
+                style={{
+                  transform: `scale(${ring.scale}) rotate(${ring.rot}deg)`,
+                  opacity: ring.opacity,
+                }}
+              >
+                {/* Left half of the monumental double-loop LOOT sculpture */}
+                <path
+                  d="M -24 -250 L -150 -160 L -150 -20 L -45 -20 L -150 65 L -150 220 L -24 140 L -24 25 L -95 -20 L -24 -85 Z"
+                  fill={ring.wireframe ? 'none' : 'var(--color-alabaster-50)'}
+                  fillOpacity={ring.wireframe ? 0 : idx === 0 ? 0.92 : 0.14}
+                  stroke={
+                    idx % 2 === 0 ? 'var(--color-alabaster-50)' : 'var(--color-ultraviolet-500)'
+                  }
+                  strokeOpacity={ring.wireframe ? 0.55 : 0.85}
+                  strokeWidth={ring.wireframe ? 1.2 : 1.8}
+                  vectorEffect="non-scaling-stroke"
+                />
+                {/* Right half mirrored across the 23.6° slash */}
+                <path
+                  d="M 24 250 L 150 160 L 150 20 L 45 20 L 150 -65 L 150 -220 L 24 -140 L 24 -25 L 95 20 L 24 85 Z"
+                  fill={ring.wireframe ? 'none' : 'var(--color-alabaster-50)'}
+                  fillOpacity={ring.wireframe ? 0 : idx === 0 ? 0.88 : 0.12}
+                  stroke={idx === 1 ? 'var(--color-signal-400)' : 'var(--color-alabaster-50)'}
+                  strokeOpacity={ring.wireframe ? 0.55 : 0.85}
+                  strokeWidth={ring.wireframe ? 1.2 : 1.8}
+                  vectorEffect="non-scaling-stroke"
+                />
+              </svg>
+            ))}
 
+            {/* Central Vanishing-Point Glow inside the tunnel */}
+            <div
+              className="size-28 rounded-full"
+              style={{
+                background:
+                  'radial-gradient(circle, var(--color-alabaster-50) 0%, color-mix(in oklab, var(--color-ultraviolet-500) 45%, transparent) 55%, transparent 75%)',
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Hero 23.6° Diagonal Split Plane (Scrubbable 0% to 100% edge-to-edge) */}
+        <div
+          onPointerMove={handleHeroPointerMove}
+          onPointerUp={() => setDragging(false)}
+          onPointerLeave={() => setDragging(false)}
+          className="absolute inset-0 z-10 select-none"
+          style={{ opacity: 'var(--hud-o)' }}
+        >
+          {/* Lower-Right Blueprint Dimension (with vertical architectural columns & 236 ruler) */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 bg-charcoal-950/85"
+            style={{
+              /* Blueprint §2 exception #1: edge-to-edge 23.6° diagonal polygon */
+              clipPath: `polygon(${topX}% 0%, 100% 0%, 100% 100%, ${bottomX}% 100%)`,
+            }}
+          >
+            <div
+              className="absolute inset-0 opacity-30"
+              style={{
+                backgroundImage:
+                  'repeating-linear-gradient(to right, color-mix(in oklab, var(--color-ultraviolet-500) 24%, transparent) 0 1px, transparent 1px 4.5rem), repeating-linear-gradient(to bottom, color-mix(in oklab, var(--color-alabaster-50) 10%, transparent) 0 1px, transparent 1px 1.5rem)',
+              }}
+            />
+
+            <div className="mx-auto flex h-full max-w-7xl items-center justify-end px-6 sm:px-12">
+              <div className="mt-24 text-right sm:mt-16">
+                <p className="text-display-lg text-ink-secondary">{HERO.displayLines[1]}</p>
+              </div>
+            </div>
+
+            {/* Architectural Dimension Ruler on the right above CTA (like `236` in dennypratama.com) */}
+            <div className="absolute bottom-24 right-16 hidden flex-col items-center md:flex">
+              <span className="h-px w-3 bg-signal" />
+              <span className="h-28 w-px bg-signal/60" />
+              <span className="my-1.5 tabular text-micro text-signal">23.6°</span>
+              <span className="h-12 w-px bg-signal/60" />
+              <span className="h-px w-3 bg-signal" />
+            </div>
+          </div>
+
+          {/* Upper-Left Solid Surface Dimension */}
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              /* Blueprint §2 exception #1: upper-left complement of the 23.6° slash */
+              clipPath: `polygon(0% 0%, ${topX}% 0%, ${bottomX}% 100%, 0% 100%)`,
+            }}
+          >
+            <div className="mx-auto flex h-full max-w-7xl items-center px-6 sm:px-12">
+              <div className="-mt-28 sm:-mt-16">
+                <p className="mb-3 text-micro text-ink-secondary">{HERO.eyebrow}</p>
+                <h1 id="origin-title" className="text-display-lg text-ink-primary">
+                  {HERO.displayLines[0]}
+                </h1>
+              </div>
+            </div>
+          </div>
+
+          {/* Full-Bleed 23.6° Diagonal Slash Line */}
+          <svg
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+            className="pointer-events-none absolute inset-0 size-full"
+            aria-hidden="true"
+          >
+            <line
+              x1={topX}
+              y1={0}
+              x2={bottomX}
+              y2={100}
+              stroke="var(--color-signal-400)"
+              strokeOpacity={0.85}
+              strokeWidth={1.5}
+              vectorEffect="non-scaling-stroke"
+            />
+          </svg>
+
+          {/* Draggable Scrub Handle + Brand Circle on the 23.6° line */}
+          <button
+            type="button"
+            onPointerDown={(event) => {
+              event.currentTarget.setPointerCapture(event.pointerId);
+              setDragging(true);
+            }}
+            aria-label="Drag left or right to scrub the diagonal slash across the screen"
+            className="pointer-events-auto absolute top-1/2 z-30 flex -translate-x-1/2 -translate-y-1/2 cursor-ew-resize items-center gap-2 rounded-full border border-signal bg-charcoal-950/95 px-3.5 py-1.5 text-micro font-medium text-ink-primary shadow-paper"
+            style={{ left: `${slashPct}%` }}
+          >
+            <span aria-hidden className="size-2 rounded-full bg-signal" />
+            <span>Scrub</span>
+          </button>
+        </div>
+
+        {/* Whole, Uncut Centerpiece LOOT Card at rest (scales forward as dive begins) */}
+        <div
+          className="perspective-distant pointer-events-none absolute inset-0 z-20 flex items-center justify-center px-6"
+          style={{
+            opacity: 'var(--card-o)',
+            transform: 'scale(var(--card-s))',
+          }}
+        >
+          <div className="w-60 sm:w-84 lg:w-96" style={{ transform: 'rotate(-8deg)' }}>
+            <div className="dispatch-rise">
+              <LootCard edition="stealth" />
+            </div>
+          </div>
+        </div>
+
+        {/* Top Header Chrome */}
         <header
-          className="pointer-events-none absolute inset-x-5 top-5 z-30 flex items-center justify-between gap-4 sm:inset-x-10 sm:top-6"
+          className="pointer-events-none absolute inset-x-6 top-6 z-30 flex items-center justify-between gap-4 sm:inset-x-12 sm:top-7"
           style={{ opacity: 'var(--hud-o)' }}
         >
           <a
@@ -74,7 +254,10 @@ export function ActOneOrigin() {
             </span>
           </a>
 
-          <div className="pointer-events-auto">
+          <div className="pointer-events-auto flex items-center gap-6">
+            <span className="hidden text-micro text-ink-muted md:inline">
+              {HERO.editionYear} / {HERO.editionTag}
+            </span>
             <ActionLink href="#claim" variant="ghost" className="px-4 py-1.5 text-micro sm:text-data">
               <span>{HERO.topCta}</span>
               <ArrowUpRight className="size-3.5 text-signal" />
@@ -82,220 +265,72 @@ export function ActOneOrigin() {
           </div>
         </header>
 
+        {/* Hero Bottom Negative-Space Bio & CTA */}
         <div
-          className="pointer-events-none absolute inset-x-5 top-20 z-10 flex items-baseline justify-between gap-4 sm:inset-x-10 sm:top-22"
-          style={{ opacity: 'var(--headline-o)' }}
-        >
-          <p className="text-micro font-medium text-signal">{HERO.eyebrow}</p>
-          <p className="hidden items-center gap-3 text-micro text-ink-muted sm:flex">
-            <span>{HERO.editionYear}</span>
-            <span className="text-ultraviolet-500">/</span>
-            <span>{HERO.editionTag}</span>
-          </p>
-        </div>
-
-        <div
-          className="pointer-events-none absolute inset-x-5 top-26 z-10 sm:inset-x-10 sm:top-28"
-          style={{ opacity: 'var(--headline-o)' }}
-        >
-          <h1 id="origin-title" className="text-display-xl text-balance">
-            <span className="block" style={{ transform: 'translate3d(0, var(--line1-y), 0)' }}>
-              {HERO.displayLines[0]}
-            </span>
-            <span
-              className="block text-right"
-              style={{ transform: 'translate3d(0, var(--line2-y), 0)' }}
-            >
-              {HERO.displayLines[1]}
-            </span>
-          </h1>
-        </div>
-
-        <div
-          className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-between px-5 pb-6 pt-6 sm:px-10 sm:pb-8 sm:pt-8"
-          style={{
-            opacity: 'var(--stage-o)',
-            transform: 'translate3d(0, var(--stage-y), 0)',
-          }}
-        >
-          <div className="mx-auto hidden w-full max-w-5xl items-center justify-between border-b border-hairline pb-3 text-micro sm:flex">
-            <div className="flex items-center gap-3">
-              <span className="rounded-full bg-ultraviolet-900 px-3 py-0.5 font-medium text-alabaster-50 ring-1 ring-ultraviolet-500/50">
-                Real payment example
-              </span>
-              <span className="text-ink-secondary">
-                See what happens when you tap Rp 480.000 for a team dinner
-              </span>
-            </div>
-            <span className="font-medium text-signal">No manual sorting needed</span>
-          </div>
-
-          <div className="mx-auto my-auto grid w-full max-w-5xl items-start gap-5 sm:grid-cols-12 sm:gap-8">
-            <div className="rounded-panel border border-ultraviolet-500/30 bg-charcoal-950/90 p-5 shadow-paper sm:col-span-5 sm:p-6">
-              <div className="flex items-center justify-between gap-2 border-b border-hairline pb-3">
-                <div>
-                  <span className="text-micro font-medium text-signal">Set once in your app</span>
-                  <h2 className="mt-0.5 text-title text-ink-primary">{RULESET.label}</h2>
-                </div>
-                <span className="rounded-full border border-ultraviolet-500/40 bg-ultraviolet-900/60 px-3 py-1 text-micro font-medium text-alabaster-50">
-                  100% total
-                </span>
-              </div>
-
-              <p className="mt-2.5 text-body-sm text-ink-secondary">{RULESET.note}</p>
-
-              <ul className="mt-3 divide-y divide-hairline border-t border-hairline">
-                {VAULT_RULES.map((rule, index) => {
-                  const line = split.lines[index];
-                  const amountIdr = line?.amountIdr ?? 0;
-                  const meta = VAULT_LEDGER[rule.id];
-                  return (
-                    <li key={rule.id} className="py-2.5">
-                      <div className="flex items-baseline justify-between gap-2 text-micro sm:text-body-sm">
-                        <div className="flex items-baseline gap-2">
-                          <span className="font-semibold text-ink-primary">{rule.label}</span>
-                          <span className="text-micro text-ink-muted">{meta.action}</span>
-                        </div>
-                        <div className="flex items-baseline gap-2">
-                          <span className="tabular text-micro text-ink-secondary">
-                            {rule.sharePct}%
-                          </span>
-                          <span
-                            className="tabular font-semibold text-signal"
-                            style={{ opacity: `var(--row-${index})` }}
-                          >
-                            {formatIdrCompact(amountIdr)}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="mt-1.5 h-1.5 w-full rounded-full bg-charcoal-800">
-                        <div
-                          className={`h-full origin-left rounded-full ${BAR_TONES[index] ?? 'bg-alabaster-50'}`}
-                          style={{
-                            width: `${rule.sharePct}%`,
-                            transform: `scaleX(var(--row-${index}))`,
-                          }}
-                        />
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-
-              <div className="mt-3 flex items-center justify-between border-t border-hairline pt-2.5 text-micro">
-                <span className="text-ink-muted">Applies to every payment</span>
-                <span
-                  className="font-semibold text-signal"
-                  style={{ opacity: 'var(--settle)' }}
-                >
-                  All 4 pockets updated
-                </span>
-              </div>
-            </div>
-
-            <div className="sm:col-span-7">
-              <LootTerminal />
-              <Receipt split={split} />
-            </div>
-          </div>
-
-          <dl className="mx-auto hidden w-full max-w-5xl grid-cols-3 gap-6 border-t border-hairline pt-3.5 sm:grid">
-            {HOW_IT_WORKS_STEPS.map((item, index) => (
-              <div
-                key={item.step}
-                className="flex items-baseline gap-3 border-r border-hairline pr-4 last:border-r-0 last:pr-0"
-              >
-                <dt
-                  className={`rounded-full px-2.5 py-0.5 text-micro font-semibold ${
-                    index === 0
-                      ? 'bg-signal text-ink'
-                      : 'bg-ultraviolet-900 text-alabaster-50 ring-1 ring-ultraviolet-500/40'
-                  }`}
-                >
-                  {item.step}
-                </dt>
-                <dd className="text-micro text-ink-secondary">{item.text}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-
-        <div className="perspective-distant pointer-events-none absolute inset-0 z-30 flex items-center justify-center px-5 sm:px-10">
-          <div className="w-full max-w-5xl">
-            <div
-              className="relative mx-auto w-56 sm:w-88 lg:w-104"
-              style={{
-                transform:
-                  'translate3d(var(--card-x, 0%), var(--card-y, -4svh), 0) scale(var(--card-s)) rotateX(var(--card-rx)) rotateY(var(--card-ry)) rotateZ(var(--card-rz))',
-              }}
-            >
-              <div className="dispatch-rise">
-                <LootCard edition="stealth" />
-              </div>
-
-              <span
-                aria-hidden
-                className="pointer-events-none absolute left-1/2 top-1/2 size-24 rounded-full border border-signal sm:size-28"
-                style={{
-                  opacity: 'var(--nfc)',
-                  transform: 'translate3d(-50%, -50%, 0) scale(calc(0.4 + var(--nfc) * 1.1))',
-                }}
-              />
-              <span
-                aria-hidden
-                className="pointer-events-none absolute left-1/2 top-1/2 size-24 rounded-full border border-ultraviolet-500 sm:size-28"
-                style={{
-                  opacity: 'calc(var(--nfc) * 0.6)',
-                  transform: 'translate3d(-50%, -50%, 0) scale(calc(0.4 + var(--nfc) * 1.9))',
-                }}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div
-          className="pointer-events-none absolute inset-x-5 bottom-5 z-30 sm:inset-x-10 sm:bottom-8"
+          className="pointer-events-none absolute inset-x-6 bottom-6 z-30 sm:inset-x-12 sm:bottom-8"
           style={{ opacity: 'var(--hud-o)', transform: 'translate3d(0, var(--hud-y), 0)' }}
         >
-          <div className="grid grid-cols-1 items-end gap-4 md:grid-cols-12 md:gap-8">
-            <div className="md:col-span-6">
-              <span className="inline-flex items-center gap-2 rounded-full border border-ultraviolet-500/40 bg-charcoal-950/90 px-3 py-1 text-micro font-medium text-ink-primary">
-                <span aria-hidden className="size-1.5 rounded-full bg-signal" />
-                {HERO.specBadge}
-              </span>
-              <div className="mt-3 text-title">
-                <p className="text-ink-primary">{HERO.manifesto[0]}</p>
-                <p className="text-signal">{HERO.manifesto[1]}</p>
-                <p className="text-ink-primary">{HERO.manifesto[2]}</p>
-              </div>
+          <div className="grid grid-cols-1 items-end gap-6 md:grid-cols-12">
+            <div className="md:col-span-5">
+              <p className="max-w-md text-body-sm text-ink-secondary">{HERO.hudSupport}</p>
+              <p className="mt-2 text-micro text-ink-muted">{HERO.specBadge}</p>
             </div>
 
-            <div className="pointer-events-auto md:col-span-5 md:col-start-8 md:flex md:flex-col md:items-end md:text-right">
-              <p className="hidden max-w-sm text-body-sm text-ink-secondary sm:block">
-                {HERO.hudSupport}
-              </p>
-              <div className="mt-3 flex flex-wrap items-center gap-3 sm:mt-4 md:justify-end">
-                <ActionLink href="#claim">
-                  <span>{HERO.cta}</span>
-                  <ArrowUpRight className="size-3.5" />
-                </ActionLink>
-                <button
-                  type="button"
-                  onClick={() => scrollToChapter('origin', 0.72)}
-                  className={actionClass('ghost')}
-                >
-                  <span>{HERO.exploreCta}</span>
-                  <ArrowDown className="size-3.5 text-signal" />
-                </button>
-              </div>
+            <div className="pointer-events-auto flex flex-wrap items-center gap-3 md:col-span-5 md:col-start-8 md:justify-end">
+              <ActionLink href="#claim">
+                <span>{HERO.cta}</span>
+                <ArrowUpRight className="size-3.5" />
+              </ActionLink>
+              <button
+                type="button"
+                onClick={() => scrollToChapter('anatomy')}
+                className={actionClass('ghost')}
+              >
+                <span>Four pockets</span>
+                <ArrowDown className="size-3.5 text-signal" />
+              </button>
             </div>
           </div>
         </div>
 
-        <p className="sr-only">
-          {RECEIPT.merchant}. {RECEIPT.approved}. Total {formatNumber(split.totalIdr)} rupiah. Split
-          on approval: {spokenSplit.join('. ')}.
-        </p>
+        {/* 4 Sequential Gigantic Dive Statements (01..04) during the Tunnel Flight */}
+        <div className="pointer-events-none absolute inset-x-6 bottom-24 z-20 mx-auto max-w-7xl sm:inset-x-12 sm:bottom-28">
+          {HERO.diveFrames.map((frame, index) => (
+            <div
+              key={frame.code}
+              className="max-w-3xl"
+              style={{
+                opacity: FRAME_VARS[index],
+                transform: `translate3d(0, calc((1 - ${FRAME_VARS[index]}) * 1.25rem), 0)`,
+                position: index === 0 ? 'relative' : 'absolute',
+                inset: index === 0 ? undefined : 'auto auto 0 0',
+              }}
+            >
+              <p className="text-micro text-ink-secondary">
+                <span className="tabular text-signal">{frame.code}</span>
+                <span className="mx-2 text-ink-muted">/</span>
+                <span>{frame.tag}</span>
+              </p>
+              <p className="mt-2 text-display-md text-balance text-ink-primary">{frame.headline}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom-Center Live Degree Counter (`00° -> 145°`, identical to dennypratama.com) */}
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-6 z-20 flex flex-col items-center text-center sm:bottom-8"
+          style={{ opacity: 'var(--tunnel-o, 1)' }}
+        >
+          <span className="deg-counter tabular text-display-md text-signal" />
+          <span className="mt-1 text-micro text-ink-muted">{HERO.exploreCta}</span>
+        </div>
+
+        {/* White/Alabaster Vanishing-Point Light Exit into Section 2 */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-40 bg-alabaster-50"
+          style={{ opacity: 'var(--exit-light, 0)' }}
+        />
       </div>
     </section>
   );

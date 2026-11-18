@@ -1,214 +1,186 @@
-import type { ReactNode } from 'react';
+'use client';
+
+import { useRef, type PointerEvent } from 'react';
 
 import { LootCard } from '@/components/card/loot-card';
+import { clamp } from '@/lib/scroll/math';
 import { VAULT_RULES } from '@/lib/treasury/rules';
 
 export type AnatomyLayerId = 'shell' | 'core' | 'engine';
 
-interface LayerStackProps {
-  readonly activeLayer?: AnatomyLayerId | null;
+const ZONE_LIST = [
+  { id: 'shell', x: '76%', y: '28%' },
+  { id: 'core', x: '24%', y: '50%' },
+  { id: 'engine', x: '66%', y: '68%' },
+] as const;
+
+const ZONE_COORDS: Readonly<Record<AnatomyLayerId, { readonly x: string; readonly y: string }>> = {
+  shell: ZONE_LIST[0],
+  core: ZONE_LIST[1],
+  engine: ZONE_LIST[2],
+};
+
+interface CardScannerProps {
+  readonly activeLayer: AnatomyLayerId | null;
+  readonly pointerActive: boolean;
+  readonly onHoverZone: (id: AnatomyLayerId | null) => void;
 }
 
 /**
- * The card, exploded into its three physical layers: solid aluminium body,
- * offline security chip, and built-in pocket memory.
+ * Optical hover X-Ray scanner (`dennypratama.com` reference). Moving the cursor
+ * over the card steers a circular optical lens revealing the peaceful internal
+ * pocket architecture — aluminium shell, offline security chip, and 4 pockets —
+ * without mechanical PCB graphics.
  */
-export function LayerStack({ activeLayer = null }: LayerStackProps) {
-  const plateOpacity = (id: AnatomyLayerId): number =>
-    activeLayer === null || activeLayer === id ? 1 : 0.38;
+export function LayerStack({ activeLayer, pointerActive, onHoverZone }: CardScannerProps) {
+  const stageRef = useRef<HTMLDivElement | null>(null);
 
-  return (
-    <div className="perspective-distant w-full">
-      <div
-        className="card-face relative mx-auto w-full"
-        style={{
-          transformStyle: 'preserve-3d',
-          transform:
-            'translate3d(0, var(--scene-y), 0) scale(var(--scene-s)) rotateX(var(--ax)) rotateZ(var(--az))',
-        }}
-      >
-        <Plate
-          z="0px"
-          opacity={plateOpacity('engine')}
-          highlighted={activeLayer === 'engine'}
-          className="bg-charcoal-950 ring-1 ring-ultraviolet-500/45"
-          label="Built-in pocket memory"
-        >
-          <svg
-            viewBox="0 0 340 214"
-            className="pointer-events-none absolute inset-0 size-full text-ultraviolet-500"
-            fill="none"
-            aria-hidden="true"
-          >
-            <path
-              d="M36 42 H132 L156 66 H254"
-              stroke="currentColor"
-              strokeOpacity={0.4}
-              strokeWidth={1.2}
-            />
-            <path
-              d="M36 62 H118 L142 86 H286"
-              stroke="var(--color-signal-400)"
-              strokeOpacity={0.5}
-              strokeWidth={1.2}
-            />
-            <path
-              d="M208 168 H292 L310 150 V52"
-              stroke="currentColor"
-              strokeOpacity={0.4}
-              strokeWidth={1.2}
-            />
-            <rect
-              x="252"
-              y="118"
-              width="52"
-              height="52"
-              stroke="currentColor"
-              strokeOpacity={0.6}
-              strokeWidth={1.2}
-            />
-            <rect
-              x="266"
-              y="132"
-              width="24"
-              height="24"
-              fill="var(--color-signal-400)"
-              fillOpacity={0.85}
-            />
-          </svg>
+  const handlePointerMove = (event: PointerEvent<HTMLDivElement>): void => {
+    const el = stageRef.current;
+    if (el === null) {
+      return;
+    }
+    const rect = el.getBoundingClientRect();
+    const x = clamp(((event.clientX - rect.left) / rect.width) * 100, 12, 88);
+    const y = clamp(((event.clientY - rect.top) / rect.height) * 100, 14, 86);
+    el.style.setProperty('--scan-x', `${x.toFixed(1)}%`);
+    el.style.setProperty('--scan-y', `${y.toFixed(1)}%`);
+  };
 
-          <div className="relative flex h-full flex-col justify-between p-5">
-            <div className="flex items-center justify-between text-micro text-alabaster-50/80">
-              <span>Built-in pocket memory</span>
-              <span className="rounded-full bg-signal px-2.5 py-0.5 font-semibold text-ink">
-                4 pockets
-              </span>
-            </div>
+  const targetCoords = activeLayer !== null ? ZONE_COORDS[activeLayer] : null;
+  const lensX = pointerActive
+    ? 'var(--scan-x, 50%)'
+    : (targetCoords?.x ?? 'var(--scan-auto-x, 45%)');
+  const lensY = pointerActive
+    ? 'var(--scan-y, 50%)'
+    : (targetCoords?.y ?? 'var(--scan-auto-y, 50%)');
 
-            <div className="flex items-end gap-3">
-              {VAULT_RULES.map((rule, index) => (
-                <div key={rule.id} className="flex flex-col items-start gap-1">
-                  <span className="tabular text-micro font-medium text-alabaster-50/85">
-                    {rule.sharePct}%
-                  </span>
-                  <span
-                    className={`block w-5 rounded-full ${
-                      index === 1 ? 'bg-signal' : 'bg-ultraviolet-500'
-                    }`}
-                    style={{ height: `calc(${rule.sharePct} * 1.35px)` }}
-                  />
-                  <span className="text-micro text-alabaster-50/65">{rule.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Plate>
-
-        <Plate
-          z="var(--z-core)"
-          opacity={plateOpacity('core')}
-          highlighted={activeLayer === 'core'}
-          className="bg-ultraviolet-900/95 ring-1 ring-ultraviolet-500/70"
-          label="Offline security chip"
-        >
-          <svg
-            viewBox="0 0 340 214"
-            className="pointer-events-none absolute inset-0 size-full text-ultraviolet-500"
-            fill="none"
-            aria-hidden="true"
-          >
-            <rect
-              x="16"
-              y="16"
-              width="308"
-              height="182"
-              rx="10"
-              stroke="currentColor"
-              strokeOpacity={0.4}
-              strokeWidth={1}
-            />
-            <rect
-              x="26"
-              y="26"
-              width="288"
-              height="162"
-              rx="8"
-              stroke="currentColor"
-              strokeOpacity={0.55}
-              strokeWidth={1}
-            />
-            <rect
-              x="36"
-              y="36"
-              width="268"
-              height="142"
-              rx="6"
-              stroke="var(--color-signal-400)"
-              strokeOpacity={0.5}
-              strokeWidth={1}
-            />
-            <path
-              d="M170 52 V82 M170 132 V162 M108 107 H144 M196 107 H232"
-              stroke="var(--color-signal-400)"
-              strokeOpacity={0.75}
-              strokeWidth={1.25}
-            />
-            <rect
-              x="144"
-              y="81"
-              width="52"
-              height="52"
-              stroke="var(--color-signal-400)"
-              strokeOpacity={0.9}
-              strokeWidth={1.5}
-            />
-            <rect x="157" y="94" width="26" height="26" fill="var(--color-signal-400)" />
-          </svg>
-          <div className="relative flex h-full items-end justify-between p-5 text-micro text-alabaster-50">
-            <span>Offline security chip</span>
-            <span className="font-semibold text-signal">Approves in 0.4 s</span>
-          </div>
-        </Plate>
-
-        <Plate
-          z="var(--z-shell)"
-          opacity={plateOpacity('shell')}
-          highlighted={activeLayer === 'shell'}
-          className="ring-1 ring-alabaster-50/30"
-          label="Solid aluminium body"
-        >
-          <LootCard edition="stealth" className="h-full w-full" />
-        </Plate>
-      </div>
-    </div>
-  );
-}
-
-interface PlateProps {
-  readonly z: string;
-  readonly label: string;
-  readonly opacity: number;
-  readonly highlighted: boolean;
-  readonly className: string;
-  readonly children: ReactNode;
-}
-
-function Plate({ z, label, opacity, highlighted, className, children }: PlateProps) {
   return (
     <div
-      aria-label={label}
-      role="group"
-      className={`card-face absolute inset-0 overflow-hidden rounded-card text-alabaster-50 transition-opacity duration-300 ${className} ${
-        highlighted ? 'ring-2 ring-signal' : ''
-      }`}
+      ref={stageRef}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={() => onHoverZone(null)}
+      className="card-face relative mx-auto w-full cursor-crosshair select-none"
       style={{
-        opacity,
-        transform: `translateZ(${z})`,
-        boxShadow:
-          'inset 0 1px 0 rgb(255 255 255 / 0.12), 0 28px 56px -34px rgb(0 0 0 / calc(0.45 + var(--plate-shadow) * 0.55))',
+        opacity: 'var(--card-enter, 1)',
+        transform: 'translate3d(0, calc((1 - var(--card-enter, 1)) * 1rem), 0)',
       }}
     >
-      {children}
+      {/* Exterior Matte Metal Card */}
+      <LootCard edition="stealth" className="h-full w-full" />
+
+      {/* Circular Optical X-Ray Blueprint Lens */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 overflow-hidden rounded-card border border-signal/70 bg-ultraviolet-900"
+        style={{
+          /* Blueprint §2 exception #1: circular optical iris lens following pointer or active zone */
+          clipPath: `circle(29% at ${lensX} ${lensY})`,
+          transition: pointerActive ? 'none' : 'clip-path 380ms var(--ease-loot)',
+        }}
+      >
+        <div
+          className="blueprint absolute inset-0 opacity-35"
+          style={{
+            backgroundImage:
+              'repeating-linear-gradient(to right, color-mix(in oklab, var(--color-signal-400) 22%, transparent) 0 1px, transparent 1px 1.5rem), repeating-linear-gradient(to bottom, color-mix(in oklab, var(--color-signal-400) 22%, transparent) 0 1px, transparent 1px 1.5rem)',
+          }}
+        />
+
+        {/* Smooth architectural interior lines (non-mechanical curves & clean zones) */}
+        <svg viewBox="0 0 340 214" fill="none" className="absolute inset-0 size-full">
+          <rect
+            x="16"
+            y="16"
+            width="308"
+            height="182"
+            rx="12"
+            stroke="var(--color-alabaster-50)"
+            strokeOpacity={0.28}
+            strokeWidth={1}
+          />
+          <rect
+            x="40"
+            y="84"
+            width="42"
+            height="32"
+            rx="5"
+            stroke="var(--color-signal-400)"
+            strokeWidth={1.25}
+          />
+          <circle
+            cx="61"
+            cy="100"
+            r="26"
+            stroke="var(--color-ultraviolet-500)"
+            strokeOpacity={0.65}
+            strokeDasharray="3 3"
+            strokeWidth={1}
+          />
+          <path
+            d="M82 100 C 145 100, 155 62, 224 62"
+            stroke="var(--color-signal-400)"
+            strokeOpacity={0.8}
+            strokeWidth={1.25}
+          />
+          <path
+            d="M82 100 C 145 100, 155 152, 224 152"
+            stroke="var(--color-ultraviolet-500)"
+            strokeOpacity={0.85}
+            strokeWidth={1.25}
+          />
+        </svg>
+
+        <div className="relative flex h-full flex-col justify-between p-5 text-alabaster-50">
+          <div className="flex items-center justify-between text-micro">
+            <span className="font-medium text-signal">Internal X-ray view</span>
+            <span className="text-alabaster-50/75">0.78 mm aluminium</span>
+          </div>
+
+          <div className="ml-auto w-1/2 space-y-1 text-micro">
+            {VAULT_RULES.map((rule) => (
+              <div key={rule.id} className="flex items-baseline justify-between gap-2">
+                <span className="text-alabaster-50/80">{rule.label}</span>
+                <span className="tabular font-semibold text-signal">{rule.sharePct}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Subtle Scanner Reticle Ring */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute size-16 -translate-x-1/2 -translate-y-1/2 rounded-full border border-signal/80"
+        style={{
+          left: lensX,
+          top: lensY,
+          transition: pointerActive ? 'none' : 'left 380ms var(--ease-loot), top 380ms var(--ease-loot)',
+        }}
+      />
+
+      {/* Interactive Zone Anchor Dots */}
+      {ZONE_LIST.map((zone) => {
+        const isSelected = activeLayer === zone.id;
+        return (
+          <button
+            key={zone.id}
+            type="button"
+            onMouseEnter={() => onHoverZone(zone.id)}
+            onFocus={() => onHoverZone(zone.id)}
+            onClick={() => onHoverZone(zone.id)}
+            aria-label={`Inspect ${zone.id} zone`}
+            className="absolute z-20 grid size-7 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full"
+            style={{ left: zone.x, top: zone.y }}
+          >
+            <span
+              className={`size-2.5 rounded-full transition-transform duration-200 ${
+                isSelected ? 'scale-125 bg-signal' : 'bg-alabaster-50/80 hover:scale-125'
+              }`}
+            />
+          </button>
+        );
+      })}
     </div>
   );
 }

@@ -166,17 +166,16 @@ not a fade.
 
 ### 3.5 Type
 
-Editorial display + clean human-friendly geometric sans with `tabular-nums` for figures.
+One architectural sans-serif family with variable width and weight contrast, pairing `tabular-nums` for figures.
 
-- **Syne** (`wght 600–800`) — display titles and act headlines (`text-display-*`, `text-title`).
-- **Plus Jakarta Sans** (`wght 400–700`) — body, UI controls, labels, and `tabular-nums` financial figures.
+- **Archivo** (variable, `wght 100–900`, `wdth 62–125`) — display, headings, body, UI controls, and financial data.
 
 ```
-Wordmark:  Syne 700, tracking 0.28em, uppercase             (only the mark)
-Display:   Syne 700, tracking -0.04em, uppercase            (hero display lines)
-Headings:  Syne 700, tracking -0.025em, sentence case
-Body/UI:   Plus Jakarta Sans, tracking 0, sentence case
-Data:      Plus Jakarta Sans tabular-nums (600/700 weight)
+Wordmark:  Archivo 700, tracking 0.28em, uppercase             (only the mark)
+Display:   Archivo 500, tracking -0.04em, uppercase            (hero display lines)
+Headings:  Archivo 500, tracking -0.03em, sentence case
+Body/UI:   Archivo 400, tracking 0,       sentence case
+Data:      Archivo tabular-nums (500/600 weight)
 ```
 
 Scale tokens (fluid, no arbitrary brackets in components):

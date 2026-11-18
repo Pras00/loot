@@ -24,34 +24,34 @@
 
   --color-ink: #121216;
 
-  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-syne), var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
 
-  --text-display-xl: clamp(2.75rem, 11.75vw, 12.75rem);
+  --text-display-xl: clamp(3.5rem, 11vw, 11rem);
   --text-display-xl--line-height: 0.88;
-  --text-display-xl--letter-spacing: -0.04em;
-  --text-display-xl--font-weight: 700;
+  --text-display-xl--letter-spacing: -0.055em;
+  --text-display-xl--font-weight: 300;
 
-  --text-display-lg: clamp(2.25rem, 6vw, 4.75rem);
-  --text-display-lg--line-height: 0.94;
-  --text-display-lg--letter-spacing: -0.03em;
-  --text-display-lg--font-weight: 700;
+  --text-display-lg: clamp(2.5rem, 6.8vw, 6.75rem);
+  --text-display-lg--line-height: 0.92;
+  --text-display-lg--letter-spacing: -0.05em;
+  --text-display-lg--font-weight: 300;
 
-  --text-display-md: clamp(1.75rem, 3.3vw, 2.65rem);
-  --text-display-md--line-height: 1.08;
-  --text-display-md--letter-spacing: -0.025em;
-  --text-display-md--font-weight: 700;
+  --text-display-md: clamp(1.875rem, 4.2vw, 4rem);
+  --text-display-md--line-height: 0.98;
+  --text-display-md--letter-spacing: -0.04em;
+  --text-display-md--font-weight: 300;
 
-  --text-title: clamp(1.25rem, 1.9vw, 1.65rem);
-  --text-title--line-height: 1.22;
-  --text-title--letter-spacing: -0.02em;
-  --text-title--font-weight: 600;
+  --text-title: clamp(1.375rem, 2.2vw, 2.125rem);
+  --text-title--line-height: 1.15;
+  --text-title--letter-spacing: -0.03em;
+  --text-title--font-weight: 300;
 
-  --text-figure: clamp(1.25rem, 1.85vw, 1.625rem);
-  --text-figure--line-height: 1.15;
-  --text-figure--letter-spacing: -0.02em;
-  --text-figure--font-weight: 600;
+  --text-figure: clamp(1.5rem, 2.6vw, 2.375rem);
+  --text-figure--line-height: 1.08;
+  --text-figure--letter-spacing: -0.035em;
+  --text-figure--font-weight: 300;
 
   --text-body: 1rem;
   --text-body--line-height: 1.65;
@@ -138,6 +138,12 @@
 
 @property --nfc {
   syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --deg-num {
+  syntax: "<integer>";
   inherits: true;
   initial-value: 0;
 }
@@ -426,29 +432,14 @@
     opacity: 0.9;
   }
 
-  /* Dossier sheet. Static on small screens; stacked from sm up, where each
-     sheet's offset comes from its position in the stack. */
-  .sheet {
-    position: relative;
+  .deg-counter::before {
+    counter-reset: deg var(--deg-num, 0);
+    content: counter(deg, decimal-leading-zero) "°";
   }
 
-  @media (min-width: 40rem) {
-    .sheet {
-      position: sticky;
-      top: calc(4rem + var(--sheet-top, 0rem));
-    }
-
-    .sheet:nth-child(2) {
-      --sheet-top: 1.25rem;
-    }
-
-    .sheet:nth-child(3) {
-      --sheet-top: 2.5rem;
-    }
-
-    .sheet:nth-child(4) {
-      --sheet-top: 3.75rem;
-    }
+  /* Editorial dossier sections flow cleanly without overlapping later blocks. */
+  .sheet {
+    position: relative;
   }
 
   .loot-card__chip {

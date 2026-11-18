@@ -27,18 +27,40 @@ export interface ActMeta {
 }
 
 export const HERO = {
-  eyebrow: 'Smart metal card for automatic money sorting',
+  eyebrow: 'Smart metal card',
   editionYear: '2026 Edition',
-  editionTag: '6.1 g solid aluminium',
-  displayLines: ['LIQUID BY', 'DESIGN'],
-  specBadge: 'Accepted in 42 countries',
+  editionTag: '6.1 g aluminium',
+  displayLines: ['You tap once.', 'It splits four ways.'],
+  specBadge: 'Accepted in 42 countries / 0.4 s offline approval',
   manifesto: ['One Metal Card.', 'Automatic Money Pockets.', 'Zero Manual Accounting.'],
   hud: 'One metal card. Automatic money pockets. Zero manual accounting.',
   hudSupport:
-    'Pay once at any counter, and LOOT automatically divides the bill across your tax, daily expenses, savings, and payroll pockets.',
-  cta: 'Get LOOT Card',
+    'Eight years of messy month-end spreadsheets replaced by a single metal card. Pay once at any counter, and your tax, daily expenses, savings, and payroll sort themselves on the spot.',
+  cta: 'Claim your card',
   topCta: 'Claim your card',
-  exploreCta: 'See how it works',
+  exploreCta: 'Scroll to go through the slash',
+  diveFrames: [
+    {
+      code: '01',
+      tag: 'b / the bill',
+      headline: 'Every payment starts as one single bill.',
+    },
+    {
+      code: '02',
+      tag: 'm / the mess',
+      headline: 'Most cards dump it into one mixed balance.',
+    },
+    {
+      code: '03',
+      tag: 'g / the gap',
+      headline: 'Sorting receipts by hand is where time disappears.',
+    },
+    {
+      code: '04',
+      tag: 'l / loot automatic',
+      headline: "You don't sort it later. The card splits it on the spot.",
+    },
+  ],
 } as const;
 
 export const RECEIPT = {
@@ -58,8 +80,8 @@ export const RULESET = {
 } as const;
 
 export const ANATOMY = {
-  title: 'Works anywhere, even when your phone is offline.',
-  lead: 'Most cards rely on an app or bank server to sort your money. LOOT stores your pocket rules inside the card itself, so every tap finishes in under half a second.',
+  title: 'Paid once. Sorted four ways.',
+  lead: 'One Rp 480.000 dinner updates all four of your pockets at the exact same moment. Point at any pocket to see its share.',
   layers: [
     {
       id: 'shell',
@@ -80,18 +102,18 @@ export const ANATOMY = {
 } as const;
 
 export const FLOW = {
-  title: 'Every pocket stays funded without lifting a finger.',
-  lead: 'No more sorting receipts or moving money between accounts at the end of the month. One payment updates all four of your balances at once.',
+  title: 'The card, constructed.',
+  lead: 'One angle, 23.6°, and three thin layers pressed into 0.78 millimeters of solid metal. The lines become a card the same way a rule becomes automatic.',
   balances: 'Your pocket balances after dinner',
   note: 'Money lands in each pocket the same second you tap. No waiting for overnight bank batches.',
 } as const;
 
 export const FORGE = {
-  title: 'Try it yourself. Set your own split.',
-  lead: 'Pick a card finish, choose how you want to divide your money, and slide the payment amount to see your pockets update live.',
+  title: 'One card. Both sides of the line.',
+  lead: 'Scrub across the 23.6° cut to inspect the internal pocket blueprint, then slide the bill amount below to test your live split.',
   editionLabel: 'Card finish',
   ruleLabel: 'Splitting style',
-  amountLabel: 'Payment amount to test',
+  amountLabel: 'Slide the bill amount',
   limitLabel: 'Spending limit',
   declined: 'Over your spending limit. Lower the amount or raise your limit.',
   tap: 'Test this payment',
@@ -106,8 +128,41 @@ export const FORGE = {
 } as const;
 
 export const SPEC = {
-  title: 'Simple, transparent details.',
-  lead: 'Everything you need to know about the physical card, your security, how pockets work, and delivery.',
+  title: 'Zero manual accounting.',
+  lead: 'Everything you need to know about how LOOT works in the real world.',
+  stories: [
+    {
+      index: '01',
+      total: '03',
+      author: 'At the restaurant',
+      role: 'Team dinner, Rp 480.000',
+      quote: 'Dinner is paid in one tap.',
+      body: 'Instead of saving paper receipts for your accountant, 20% is already in your tax pocket and 45% is deducted from daily operating funds before you leave the table.',
+    },
+    {
+      index: '02',
+      total: '03',
+      author: 'In the air or subway',
+      role: 'Zero phone signal',
+      quote: 'Phone off. Still works.',
+      body: 'Because your splitting rules live inside the 0.78 mm metal card itself, payments approve in 0.4 seconds even when your phone battery is dead or you have no roaming data.',
+    },
+    {
+      index: '03',
+      total: '03',
+      author: 'At tax day',
+      role: 'End of the quarter',
+      quote: 'Tax is already waiting.',
+      body: 'Every transaction all quarter long automatically set aside its exact rupiah share. When tax day arrives, the money is already sitting in its own pocket.',
+    },
+  ],
+  stats: [
+    { figure: '0.4s', label: 'Approval speed', sub: 'Offline at any reader', barPct: 92 },
+    { figure: '6.1g', label: 'Solid aluminium', sub: '0.78 mm wallet profile', barPct: 78 },
+    { figure: '100%', label: 'Rupiah accuracy', sub: 'Zero rounding drift', barPct: 100 },
+    { figure: '42', label: 'Countries supported', sub: 'Tracked 3-day delivery', barPct: 84 },
+    { figure: 'Rp 0', label: 'Monthly effort', sub: 'No manual spreadsheets', barPct: 96 },
+  ],
   sheets: [
     {
       id: 'card',
@@ -164,18 +219,18 @@ export const CLAIM = {
   label: 'Your email address',
   placeholder: 'you@company.com',
   cta: 'Reserve your card',
-  note: 'This is an interactive product concept. No card is shipped and your email is never stored.',
+  note: 'Interactive product concept. No card is shipped and your email is never stored.',
   success: 'Spot reserved in the concept preview. No email was stored.',
 } as const;
 
 export const FOOTER = {
-  note: 'LOOT — Interactive product concept. No money is charged and no personal data is collected.',
+  note: 'LOOT — Designed and built with the same precision. Interactive product concept.',
 } as const;
 
 export const ACTS = [
-  { id: 'origin', label: 'Overview' },
-  { id: 'anatomy', label: 'Inside the card' },
-  { id: 'flow', label: 'How money flows' },
-  { id: 'forge', label: 'Try it live' },
-  { id: 'spec', label: 'Details' },
+  { id: 'origin', label: 'The dive' },
+  { id: 'anatomy', label: 'Four pockets' },
+  { id: 'flow', label: 'Constructed' },
+  { id: 'forge', label: 'Both sides' },
+  { id: 'spec', label: 'Proof' },
 ] as const satisfies readonly ActMeta[];

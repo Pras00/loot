@@ -1,19 +1,12 @@
 import type { Metadata, Viewport } from 'next';
-import { Plus_Jakarta_Sans, Syne } from 'next/font/google';
+import { Archivo } from 'next/font/google';
 
 import './globals.css';
 
-const jakarta = Plus_Jakarta_Sans({
+const archivo = Archivo({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-jakarta',
-  display: 'swap',
-});
-
-const syne = Syne({
-  subsets: ['latin'],
-  weight: ['600', '700', '800'],
-  variable: '--font-syne',
+  axes: ['wdth'],
+  variable: '--font-archivo',
   display: 'swap',
 });
 
@@ -43,7 +36,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${jakarta.variable} ${syne.variable}`}>
+    <html lang="en" className={archivo.variable}>
       <body className="antialiased">
         {children}
         <div aria-hidden className="grain" />
