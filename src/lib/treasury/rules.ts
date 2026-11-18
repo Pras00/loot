@@ -26,7 +26,7 @@ export const VAULT_RULES = [
   { id: 'payroll', label: 'Payroll', sharePct: 10 },
 ] as const satisfies readonly VaultRule[];
 
-/** Starting balances and clear, human-friendly pocket descriptions for Act 3. */
+/** Starting balances and clear, human-friendly pocket descriptions. */
 export const VAULT_LEDGER: Readonly<Record<VaultId, VaultLedgerMeta>> = {
   tax: {
     id: 'tax',

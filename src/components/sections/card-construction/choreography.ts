@@ -3,13 +3,8 @@ import { clamp, css, easedRange } from '@/lib/scroll/math';
 
 /**
  * Section 3 — "The card, constructed." (runway 520svh, scrollable 420svh).
- *
- * Inspired by dennypratama.com's `section.con` ("The mark, constructed"):
- * geometric construction axes, the 23.6° slash line, and fine curved threads
- * draw progressively on scroll (`--grid-d`, `--threads-d`, `--outline-d`) before
- * solidifying into the finished metal card (`--solid-o`).
  */
-export function flowChoreography(progress: number): StageVars {
+export function cardConstructionChoreography(progress: number): StageVars {
   const p = clamp(progress, 0, 1);
 
   const stageO = p <= 0.002 ? 0 : 1;

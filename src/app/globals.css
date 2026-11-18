@@ -74,10 +74,8 @@
   --ease-loot: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-snap: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* Physical shadows: the receipt lifts off the terminal, the dossier sheets
-     lift off the ledger. Both are warm-neutral, never grey haze. */
+  /* Physical depth shadows: warm-neutral dark tones matching card and panel elevations. */
   --shadow-paper: 0 22px 44px -26px rgb(18 18 22 / 0.55);
-  --shadow-sheet: 0 1px 0 rgb(18 18 22 / 0.04), 0 10px 28px -20px rgb(18 18 22 / 0.28);
 }
 
 /* Scroll runways & zero-seam overlaps. Named utilities keep the choreography
@@ -124,26 +122,32 @@
   initial-value: 0;
 }
 
-@property --portal-sx {
-  syntax: "<number>";
+@property --ms-num {
+  syntax: "<integer>";
   inherits: true;
-  initial-value: 1;
+  initial-value: 0;
 }
 
-@property --portal-sy {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 1;
-}
-
-@property --nfc {
+@property --frame-0 {
   syntax: "<number>";
   inherits: true;
   initial-value: 0;
 }
 
-@property --deg-num {
-  syntax: "<integer>";
+@property --frame-1 {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --frame-2 {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --frame-3 {
+  syntax: "<number>";
   inherits: true;
   initial-value: 0;
 }
@@ -240,16 +244,6 @@
   --hairline: color-mix(in oklab, var(--color-alabaster-50) 16%, transparent);
   background-color: var(--surface-act);
   color: var(--ink-primary);
-}
-
-/* Ledger paper shared by Act 1's portal expansion and Act 2's opening light table. */
-@utility ledger-paper {
-  background-color: var(--color-alabaster-50);
-  background-image: repeating-linear-gradient(
-    to bottom,
-    color-mix(in oklab, var(--color-ink) 8%, transparent) 0 1px,
-    transparent 1px 3.5rem
-  );
 }
 
 /* Film grain — the only thing standing between charcoal and flat CSS. */
@@ -358,22 +352,22 @@
     --ink-muted: color-mix(in oklab, var(--color-ink) 42%, transparent);
   }
 
-  .brand-draw__loop {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    animation: brand-stroke 700ms var(--ease-loot) 120ms both;
+  .brand-draw__shard {
+    animation: brand-shard-in 640ms var(--ease-loot) 80ms both;
   }
 
-  .brand-draw__loop--late {
-    animation-delay: 260ms;
+  .brand-draw__shard--late {
+    animation-delay: 200ms;
   }
 
-  @keyframes brand-stroke {
+  @keyframes brand-shard-in {
     from {
-      stroke-dashoffset: 1;
+      opacity: 0;
+      transform: scale(0.92);
     }
     to {
-      stroke-dashoffset: 0;
+      opacity: 1;
+      transform: scale(1);
     }
   }
 
@@ -382,19 +376,6 @@
   .text-display-md,
   .text-title {
     font-family: var(--font-display);
-  }
-
-  /* Hardware pedestal shadow & specular highlights for Act 2 & Act 4. */
-  .anatomy-iris {
-    --iris-x: 50%;
-    --iris-y: 44%;
-  }
-
-  @media (min-width: 48rem) {
-    .anatomy-iris {
-      --iris-x: 34%;
-      --iris-y: 52%;
-    }
   }
 
   .loot-card[data-edition="stealth"] {
@@ -432,14 +413,9 @@
     opacity: 0.9;
   }
 
-  .deg-counter::before {
-    counter-reset: deg var(--deg-num, 0);
-    content: counter(deg, decimal-leading-zero) "°";
-  }
-
-  /* Editorial dossier sections flow cleanly without overlapping later blocks. */
-  .sheet {
-    position: relative;
+  .ms-counter::before {
+    counter-reset: ms var(--ms-num, 0);
+    content: "0." counter(ms, decimal-leading-zero) "s";
   }
 
   .loot-card__chip {
@@ -504,25 +480,6 @@
     animation: dispatch-rise 900ms var(--ease-loot) both;
   }
 
-  .nfc-ring {
-    animation: nfc-ping 800ms var(--ease-loot) both;
-  }
-
-  .nfc-ring--late {
-    animation-delay: 120ms;
-  }
-
-  @keyframes nfc-ping {
-    0% {
-      transform: translate(-50%, -50%) scale(0.4);
-      opacity: 0.85;
-    }
-    100% {
-      transform: translate(-50%, -50%) scale(2.2);
-      opacity: 0;
-    }
-  }
-
   @keyframes dispatch-rise {
     0% {
       transform: translate3d(0, -46svh, 0);
@@ -540,9 +497,8 @@
 
   @media (prefers-reduced-motion: reduce) {
     .dispatch-rise,
-    .brand-draw__loop {
+    .brand-draw__shard {
       animation: none;
-      stroke-dashoffset: 0;
     }
   }
 }

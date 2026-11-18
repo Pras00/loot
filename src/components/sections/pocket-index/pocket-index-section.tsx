@@ -8,7 +8,7 @@ import { formatIdr, formatIdrCompact } from '@/lib/treasury/format';
 import { SCENARIO, VAULT_LEDGER, VAULT_RULES, type VaultId } from '@/lib/treasury/rules';
 import { splitSpend } from '@/lib/treasury/split';
 
-import { anatomyChoreography } from './choreography';
+import { pocketIndexChoreography } from './choreography';
 
 interface PocketDisplayMeta {
   readonly id: VaultId;
@@ -52,13 +52,11 @@ const POCKET_ROWS = [
 const ROW_VARS = ['var(--row-0)', 'var(--row-1)', 'var(--row-2)', 'var(--row-3)'] as const;
 
 /**
- * Section 2 — "Paid once. Sorted four ways." (`dennypratama.com` Section 2 style:
- * warm bone/alabaster room, 4 full-width gigantic `Archivo 300` rows, and one
- * floating preview card on the right that updates as you point at any pocket).
+ * Section 2 — "Paid once. Sorted four ways."
  */
-export function ActTwoAnatomy() {
+export function PocketIndexSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
-  useStage(sectionRef, anatomyChoreography);
+  useStage(sectionRef, pocketIndexChoreography);
 
   const [activeId, setActiveId] = useState<VaultId>('ops');
   const split = splitSpend(SCENARIO.amountIdr);
@@ -84,17 +82,16 @@ export function ActTwoAnatomy() {
             opacity: 'var(--curtain, 0)',
           }}
         >
-          <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-between px-6 pb-8 pt-10 sm:px-12 sm:pb-10 sm:pt-12">
-            {/* Top Editorial Header (Gigantic left title + calm right lead) */}
+          <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-between px-6 py-6 sm:px-12 sm:py-8">
             <header
-              className="grid grid-cols-1 items-end gap-6 md:grid-cols-12 md:gap-8"
+              className="grid grid-cols-1 items-end gap-4 md:grid-cols-12 md:gap-8"
               style={{
                 opacity: 'var(--type-o)',
                 transform: 'translate3d(0, var(--type-y), 0)',
               }}
             >
               <div className="md:col-span-8">
-                <h2 id="anatomy-title" className="text-display-lg text-ink-primary">
+                <h2 id="anatomy-title" className="text-display-md text-ink-primary lg:text-display-lg">
                   {ANATOMY.title}
                 </h2>
               </div>
@@ -103,7 +100,6 @@ export function ActTwoAnatomy() {
               </div>
             </header>
 
-            {/* Full-Width Gigantic Pocket Index + Floating Preview Card */}
             <div className="relative my-auto">
               <ul className="divide-y divide-ink/15 border-y border-ink/20">
                 {POCKET_ROWS.map((row, index) => {
@@ -124,14 +120,14 @@ export function ActTwoAnatomy() {
                         onFocus={() => setActiveId(row.id)}
                         onClick={() => setActiveId(row.id)}
                         aria-pressed={isSelected}
-                        className="group flex w-full items-baseline justify-between gap-4 py-3 text-left sm:py-4"
+                        className="group flex w-full items-baseline justify-between gap-4 py-2 text-left sm:py-3"
                       >
-                        <div className="flex items-baseline gap-6 sm:gap-10">
-                          <span className="tabular w-8 text-data text-ink-muted">{row.code}</span>
+                        <div className="flex items-baseline gap-5 sm:gap-9">
+                          <span className="tabular w-7 text-data text-ink-muted">{row.code}</span>
                           <span
-                            className={`text-display-md transition-all duration-300 ease-loot sm:text-display-lg ${
+                            className={`text-title transition-all duration-300 ease-loot sm:text-display-md ${
                               isSelected
-                                ? 'translate-x-3 text-ink-primary'
+                                ? 'translate-x-2 text-ink-primary sm:translate-x-3'
                                 : 'text-ink/22 group-hover:translate-x-2 group-hover:text-ink/60'
                             }`}
                           >
@@ -148,56 +144,57 @@ export function ActTwoAnatomy() {
                 })}
               </ul>
 
-              {/* Floating Live Pocket Preview Card on the right (like Halden preview in Image 5) */}
-              <aside
-                aria-label="Selected pocket live breakdown"
-                className="mt-4 rounded-card border border-ink/15 bg-alabaster-50 p-5 shadow-paper md:absolute md:bottom-4 md:right-0 md:mt-0 md:w-88 lg:w-96 lg:p-6"
-                style={{
-                  opacity: 'var(--preview-o)',
-                  transform: 'translate3d(0, var(--preview-y), 0)',
-                }}
-              >
-                <div className="flex items-center justify-between gap-2 border-b border-ink/10 pb-3 text-micro">
-                  <span className="text-ink-muted">
-                    {SCENARIO.merchant} ({formatIdrCompact(SCENARIO.amountIdr)})
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-ink px-2.5 py-0.5 font-medium text-signal">
-                    <span aria-hidden className="size-1.5 rounded-full bg-signal" />
-                    {RECEIPT.approved} in 0.4s
-                  </span>
-                </div>
-
-                <div className="mt-4 flex items-baseline justify-between gap-3">
-                  <div>
-                    <p className="text-micro text-ink-muted">{activeMeta.displayTitle} share</p>
-                    <p className="tabular mt-1 text-display-md text-ink-primary">
-                      +{formatIdrCompact(deltaIdr)}
-                    </p>
+              {/* Floating Live Pocket Preview Card centered vertically on the right */}
+              <div className="mt-4 md:pointer-events-none md:absolute md:inset-y-0 md:right-0 md:mt-0 md:flex md:items-center">
+                <aside
+                  aria-label="Selected pocket live breakdown"
+                  className="pointer-events-auto rounded-card border border-ink/15 bg-alabaster-50 p-4 shadow-paper md:w-88 lg:w-96 lg:p-6"
+                  style={{
+                    opacity: 'var(--preview-o)',
+                    transform: 'translate3d(0, var(--preview-y), 0)',
+                  }}
+                >
+                  <div className="flex items-center justify-between gap-2 border-b border-ink/10 pb-3 text-micro">
+                    <span className="text-ink-muted">
+                      {SCENARIO.merchant} ({formatIdrCompact(SCENARIO.amountIdr)})
+                    </span>
+                    <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-ink px-2.5 py-0.5 font-medium text-signal">
+                      <span aria-hidden className="size-1.5 rounded-full bg-signal" />
+                      {RECEIPT.approved} in 0.4s
+                    </span>
                   </div>
-                  <span className="tabular text-title text-ultraviolet-600">
-                    {activeRule.sharePct}%
-                  </span>
-                </div>
 
-                <div className="mt-3 h-1 w-full overflow-hidden bg-ink/10">
-                  <div
-                    className="h-full bg-ultraviolet-500 transition-all duration-300 ease-loot"
-                    style={{ width: `${activeRule.sharePct}%` }}
-                  />
-                </div>
+                  <div className="mt-4 flex items-baseline justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-micro text-ink-muted">{activeMeta.displayTitle} share</p>
+                      <p className="tabular mt-1 whitespace-nowrap text-figure text-ink-primary">
+                        +{formatIdrCompact(deltaIdr)}
+                      </p>
+                    </div>
+                    <span className="tabular shrink-0 text-title text-ultraviolet-600">
+                      {activeRule.sharePct}%
+                    </span>
+                  </div>
 
-                <p className="mt-3 text-micro text-ink-secondary">{activeMeta.note}</p>
+                  <div className="mt-3 h-1 w-full overflow-hidden bg-ink/10">
+                    <div
+                      className="h-full bg-ultraviolet-500 transition-all duration-300 ease-loot"
+                      style={{ width: `${activeRule.sharePct}%` }}
+                    />
+                  </div>
 
-                <div className="mt-4 flex items-baseline justify-between border-t border-ink/10 pt-3 text-micro">
-                  <span className="text-ink-muted">Updated pocket balance</span>
-                  <span className="tabular font-semibold text-ink-primary">
-                    {formatIdr(settledIdr)}
-                  </span>
-                </div>
-              </aside>
+                  <p className="mt-3 text-micro text-ink-secondary">{activeMeta.note}</p>
+
+                  <div className="mt-4 flex items-baseline justify-between border-t border-ink/10 pt-3 text-micro">
+                    <span className="text-ink-muted">Updated pocket balance</span>
+                    <span className="tabular font-semibold text-ink-primary">
+                      {formatIdr(settledIdr)}
+                    </span>
+                  </div>
+                </aside>
+              </div>
             </div>
 
-            {/* Clean Bottom Caption */}
             <div className="flex items-baseline justify-between text-micro text-ink-muted">
               <span>Point at a pocket to inspect its share</span>
               <span>100% of Rp 480.000 sorted automatically</span>

@@ -1,5 +1,5 @@
-import { BrandMark } from '@/components/chrome/brand-mark';
-import { LootCard } from '@/components/card/loot-card';
+import { BrandMark } from '@/components/brand/brand-mark';
+import { LootCard } from '@/components/brand/loot-card';
 import { ActionLink } from '@/components/ui/action';
 import { ANATOMY, FLOW, FORGE, HERO, RECEIPT, RULESET } from '@/lib/content/copy';
 import { formatIdr, formatIdrCompact } from '@/lib/treasury/format';
@@ -19,7 +19,7 @@ export function ReducedMotionStory() {
     <div>
       <section className="surface-dark relative overflow-hidden px-5 py-16 sm:px-10">
         <div className="flex items-center gap-3">
-          <BrandMark className="h-6 w-4 text-alabaster-50" />
+          <BrandMark className="size-6 text-alabaster-50" />
           <span className="tracking-wordmark text-body-sm font-bold uppercase">LOOT</span>
         </div>
 

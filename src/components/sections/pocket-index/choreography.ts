@@ -3,12 +3,8 @@ import { clamp, css, easedRange, lerp } from '@/lib/scroll/math';
 
 /**
  * Section 2 — "Paid once. Sorted four ways." (runway 500svh, scrollable 400svh).
- *
- * Blends out of Section 1's bright tunnel exit onto the warm alabaster surface,
- * reveals the four gigantic pocket rows (`--row-0..3`), and holds steady from
- * 0.68 to 1.00 so visitors can point at any row to inspect its floating preview.
  */
-export function anatomyChoreography(progress: number): StageVars {
+export function pocketIndexChoreography(progress: number): StageVars {
   const p = clamp(progress, 0, 1);
 
   const stageO = p <= 0.002 ? 0 : 1;

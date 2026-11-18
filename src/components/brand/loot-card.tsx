@@ -1,4 +1,4 @@
-import { BrandMark } from '@/components/chrome/brand-mark';
+import { BrandMark } from '@/components/brand/brand-mark';
 import type { EditionId } from '@/lib/content/copy';
 
 const EDITION_NAMES: Readonly<Record<EditionId, string>> = {
@@ -38,7 +38,7 @@ export function LootCard({ edition = 'stealth', className }: LootCardProps) {
               •••• 4402
             </p>
           </div>
-          <BrandMark className="h-5 w-3.5 opacity-85 sm:h-6 sm:w-4" />
+          <BrandMark className="size-5 opacity-90 sm:size-6" />
         </div>
       </div>
       <span aria-hidden className="loot-card__edge" />
@@ -50,7 +50,11 @@ function ChipMark({ className }: { readonly className?: string }) {
   return (
     <span aria-hidden className={`loot-card__chip relative block overflow-hidden ${className ?? ''}`}>
       <svg viewBox="0 0 44 32" fill="none" className="size-full text-ink/35">
-        <path d="M15 0 V32 M29 0 V32 M0 11 H15 M29 11 H44 M0 21 H15 M29 21 H44" stroke="currentColor" strokeWidth="1" />
+        <path
+          d="M15 0 V32 M29 0 V32 M0 11 H15 M29 11 H44 M0 21 H15 M29 21 H44"
+          stroke="currentColor"
+          strokeWidth="1"
+        />
         <rect x="15" y="9" width="14" height="14" stroke="currentColor" strokeWidth="1" />
       </svg>
     </span>

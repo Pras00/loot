@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 export type ActionVariant = 'signal' | 'ghost' | 'quiet';
 
@@ -27,19 +27,5 @@ export function ActionLink({ href, children, variant, className }: ActionLinkPro
     <a href={href} className={`${actionClass(variant)} ${className ?? ''}`}>
       {children}
     </a>
-  );
-}
-
-interface ActionButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'> {
-  readonly children: ReactNode;
-  readonly variant?: ActionVariant;
-  readonly className?: string;
-}
-
-export function ActionButton({ children, variant, className, ...rest }: ActionButtonProps) {
-  return (
-    <button type="button" {...rest} className={`${actionClass(variant)} ${className ?? ''}`}>
-      {children}
-    </button>
   );
 }

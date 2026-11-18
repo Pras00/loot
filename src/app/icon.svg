@@ -1,7 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <rect width="64" height="64" rx="14" fill="#18181C" />
-  <g fill="none" stroke="#B9F500" stroke-width="7">
-    <rect x="16" y="11" width="32" height="18" rx="9" />
-    <rect x="16" y="35" width="32" height="18" rx="9" />
+  <g transform="translate(32 32) scale(1.06)">
+    <path d="M -17 -19 L 4.5 -19 L 4.5 -9.5 L -6 -4.9 L -6 6.2 L -17 11 Z" fill="#F4F4F6" />
+    <path d="M 8 -19 L 17 -19 L 17 -15 L 8 -11 Z" fill="#B9F500" />
+    <path d="M 17 19 L -4.5 19 L -4.5 9.5 L 6 4.9 L 6 -6.2 L 17 -11 Z" fill="#F4F4F6" />
+    <path d="M -8 19 L -17 19 L -17 15 L -8 11 Z" fill="#723BFA" />
   </g>
 </svg>

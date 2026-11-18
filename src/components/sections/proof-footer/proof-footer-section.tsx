@@ -2,16 +2,13 @@
 
 import { useState, type FormEvent } from 'react';
 
-import { BrandMark } from '@/components/chrome/brand-mark';
+import { BrandMark } from '@/components/brand/brand-mark';
 import { CLAIM, FOOTER, SPEC } from '@/lib/content/copy';
 
 /**
- * Section 5 — Proof, Specifications & Giant Editorial Footer (`dennypratama.com`
- * Section 5 + Footer style: gigantic `Archivo 300` scenario quote with 3-step
- * progress selector, 5-column proof stats grid, open hairline specifications,
- * and full-bleed dark footer).
+ * Section 5 — Proof, Specifications & Full-Bleed Dark Editorial Footer.
  */
-export function ActFiveSpec() {
+export function ProofFooterSection() {
   const [activeStoryIdx, setActiveStoryIdx] = useState<number>(0);
   const [claimedEmail, setClaimedEmail] = useState<string | null>(null);
 
@@ -29,7 +26,7 @@ export function ActFiveSpec() {
 
   return (
     <section id="spec" aria-labelledby="spec-title" className="surface-light relative z-40 bg-canvas">
-      {/* Part 1: Gigantic Scenario Quote & 3-Step Selector (Image 7 of dennypratama.com) */}
+      {/* Part 1: Gigantic Scenario Quote & 3-Step Selector */}
       <div className="mx-auto max-w-7xl px-6 pb-20 pt-24 sm:px-12 sm:pt-32">
         <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12">
           <div className="lg:col-span-7">
@@ -56,7 +53,6 @@ export function ActFiveSpec() {
           </div>
         </div>
 
-        {/* 3-Column Bottom Progress Selector Bar */}
         <div className="mt-16 grid grid-cols-1 gap-6 sm:mt-24 sm:grid-cols-3 sm:gap-8">
           {SPEC.stories.map((story, idx) => {
             const isSelected = idx === activeStoryIdx;
@@ -98,7 +94,7 @@ export function ActFiveSpec() {
           })}
         </div>
 
-        {/* Part 2: 5-Column Proof & Hardware Stats Grid (`.sx` from dennypratama.com) */}
+        {/* Part 2: 5-Column Proof & Hardware Stats Grid */}
         <dl className="mt-24 grid grid-cols-2 gap-8 border-y border-ink/15 py-14 sm:grid-cols-5">
           {SPEC.stats.map((stat, idx) => (
             <div key={stat.label} className="flex flex-col justify-between">
@@ -127,7 +123,7 @@ export function ActFiveSpec() {
 
           <div className="divide-y divide-ink/15 border-t border-ink/15 lg:col-span-8">
             {SPEC.sheets.map((sheet) => (
-              <article key={sheet.id} id={`sheet-${sheet.id}`} className="sheet py-8">
+              <article key={sheet.id} id={`sheet-${sheet.id}`} className="relative py-8">
                 <div className="flex flex-col justify-between gap-2 pb-4 sm:flex-row sm:items-baseline">
                   <h4 className="text-title text-ink-primary">{sheet.title}</h4>
                   <p className="text-micro text-ink-muted">{sheet.blurb}</p>
@@ -149,7 +145,7 @@ export function ActFiveSpec() {
         </div>
       </div>
 
-      {/* Part 4: Full-Bleed Dark Editorial Footer (`footer#contact` from dennypratama.com) */}
+      {/* Part 4: Full-Bleed Dark Editorial Footer */}
       <footer id="claim" className="surface-dark bg-charcoal-950 text-alabaster-50">
         <div className="mx-auto max-w-7xl px-6 pb-12 pt-20 sm:px-12 sm:pt-28">
           <div className="flex flex-wrap items-center justify-between gap-4 border-b border-hairline pb-6 text-micro text-ink-secondary">
@@ -219,9 +215,7 @@ export function ActFiveSpec() {
 
           <div className="mt-20 flex flex-col gap-6 border-t border-hairline pt-6 text-micro text-ink-muted sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-              <span className="grid size-5 place-items-center rounded-full bg-signal text-ink">
-                <BrandMark className="h-3 w-2" />
-              </span>
+              <BrandMark className="size-4 text-alabaster-50" accentShard />
               <span>{FOOTER.note}</span>
             </div>
             <a href="#origin" className="text-ink-secondary hover:text-signal">

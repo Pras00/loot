@@ -5,14 +5,14 @@ import { useEffect, useState } from 'react';
 import { ACTS } from '@/lib/content/copy';
 import { scrollToChapter, subscribeActiveAct } from '@/lib/scroll/engine';
 
-const LIGHT_ACTS = new Set<string>(['anatomy', 'flow', 'spec']);
+const LIGHT_SECTIONS = new Set<string>(['anatomy', 'flow', 'spec']);
 
-export function ActRail() {
+export function SectionRail() {
   const [active, setActive] = useState<string>('origin');
 
   useEffect(() => subscribeActiveAct(setActive), []);
 
-  const surface = LIGHT_ACTS.has(active) ? 'light' : 'dark';
+  const surface = LIGHT_SECTIONS.has(active) ? 'light' : 'dark';
 
   return (
     <nav

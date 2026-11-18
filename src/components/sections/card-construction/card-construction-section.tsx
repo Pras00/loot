@@ -2,43 +2,42 @@
 
 import { useRef } from 'react';
 
-import { LootCard } from '@/components/card/loot-card';
+import { LOOT_PRISM_SHARDS } from '@/components/brand/brand-mark';
+import { LootCard } from '@/components/brand/loot-card';
 import { FLOW } from '@/lib/content/copy';
 import { useStage } from '@/lib/scroll/use-stage';
 
-import { flowChoreography } from './choreography';
+import { cardConstructionChoreography } from './choreography';
 
 const CONSTRUCTION_STEPS = [
   {
     idx: '01',
     title: 'One angle, 23.6°',
     body: 'Every proportion on the card turns on a single 23.6° geometric axis.',
-    varName: 'var(--step-0)',
+    varName: 'var(--step-0, 0)',
   },
   {
     idx: '02',
     title: 'Woven into four pockets',
     body: 'Fine internal pathways connect your single tap to four isolated pocket registers.',
-    varName: 'var(--step-1)',
+    varName: 'var(--step-1, 0)',
   },
   {
     idx: '03',
     title: 'Drawn, then milled in metal',
     body: 'The lines solidify into 6.1 grams of 0.78 mm anodized aluminium that works offline.',
-    varName: 'var(--step-2)',
+    varName: 'var(--step-2, 0)',
   },
 ] as const;
 
 const THREAD_Y_OFFSETS = [-110, -75, -40, 0, 40, 75, 110] as const;
 
 /**
- * Section 3 — "The card, constructed." (`dennypratama.com` Section 3 style:
- * geometric construction threads, 23.6° datum lines, and vertex callouts weave
- * together on scroll and solidify into the finished LOOT card).
+ * Section 3 — "The card, constructed."
  */
-export function ActThreeFlow() {
+export function CardConstructionSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
-  useStage(sectionRef, flowChoreography);
+  useStage(sectionRef, cardConstructionChoreography);
 
   return (
     <section
@@ -57,10 +56,9 @@ export function ActThreeFlow() {
           <div aria-hidden className="blueprint pointer-events-none absolute inset-0 opacity-45" />
 
           <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-between px-6 pb-8 pt-10 sm:px-12 sm:pb-10 sm:pt-12">
-            {/* Top Editorial Header */}
             <header
               className="grid grid-cols-1 items-end gap-6 md:grid-cols-12 md:gap-8"
-              style={{ opacity: 'var(--type-o)' }}
+              style={{ opacity: 'var(--type-o, 0)' }}
             >
               <div className="md:col-span-7">
                 <h2 id="flow-title" className="text-display-lg text-ink-primary">
@@ -72,7 +70,6 @@ export function ActThreeFlow() {
               </div>
             </header>
 
-            {/* Center Geometric Thread Construction & Solidification Stage */}
             <div className="relative my-auto flex items-center justify-center py-4">
               <div className="relative flex w-full max-w-4xl items-center justify-center">
                 <svg
@@ -82,7 +79,7 @@ export function ActThreeFlow() {
                   aria-hidden="true"
                 >
                   {/* Phase 1: Architectural Construction Axes & 23.6° Slash Guides */}
-                  <g style={{ opacity: 'var(--grid-d)' }}>
+                  <g style={{ opacity: 'var(--grid-d, 0)' }}>
                     <line
                       x1="60"
                       y1="210"
@@ -101,7 +98,6 @@ export function ActThreeFlow() {
                       strokeOpacity={0.18}
                       strokeDasharray="4 4"
                     />
-                    {/* 23.6° Diagonal Construction Axis */}
                     <line
                       x1="348"
                       y1="400"
@@ -135,7 +131,7 @@ export function ActThreeFlow() {
                     </text>
                   </g>
 
-                  {/* Phase 2: Converging Curved Threads Weaving the Card & Double-Loop Emblem */}
+                  {/* Phase 2: Converging Curved Threads */}
                   {THREAD_Y_OFFSETS.map((offset, index) => {
                     const startY = 210 + offset * 1.45;
                     const midY = 210 + offset * 0.35;
@@ -161,7 +157,7 @@ export function ActThreeFlow() {
                     );
                   })}
 
-                  {/* Phase 2B: Wireframe Card Outline & Central Double-Loop 8 Geometry */}
+                  {/* Phase 2B: Wireframe Card Outline & Central 4-Vault Prism Geometry */}
                   <rect
                     x="220"
                     y="72"
@@ -174,37 +170,33 @@ export function ActThreeFlow() {
                     strokeDasharray={1}
                     style={{ strokeDashoffset: 'calc(1 - var(--outline-d))' }}
                   />
-                  <rect
-                    x="404"
-                    y="128"
-                    width="72"
-                    height="76"
-                    rx="26"
-                    stroke="var(--color-ultraviolet-500)"
-                    strokeWidth={2}
-                    pathLength={1}
-                    strokeDasharray={1}
-                    style={{ strokeDashoffset: 'calc(1 - var(--outline-d))' }}
-                  />
-                  <rect
-                    x="404"
-                    y="216"
-                    width="72"
-                    height="76"
-                    rx="26"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    pathLength={1}
-                    strokeDasharray={1}
-                    style={{ strokeDashoffset: 'calc(1 - var(--outline-d))' }}
-                  />
+                  <g transform="translate(440 210) scale(3.2)">
+                    {LOOT_PRISM_SHARDS.map((shard) => (
+                      <path
+                        key={shard.id}
+                        d={shard.d}
+                        stroke={
+                          shard.id === 'yield'
+                            ? 'var(--color-signal-600)'
+                            : shard.id === 'tax'
+                              ? 'var(--color-ultraviolet-500)'
+                              : 'currentColor'
+                        }
+                        strokeWidth={1.6}
+                        vectorEffect="non-scaling-stroke"
+                        pathLength={1}
+                        strokeDasharray={1}
+                        style={{ strokeDashoffset: 'calc(1 - var(--outline-d))' }}
+                      />
+                    ))}
+                  </g>
                 </svg>
 
-                {/* Phase 3: Solidified Finished Metal Card ("The lines become a solid") */}
+                {/* Phase 3: Solidified Finished Metal Card */}
                 <div
                   className="pointer-events-none absolute w-64 sm:w-88 lg:w-100"
                   style={{
-                    opacity: 'var(--solid-o)',
+                    opacity: 'var(--solid-o, 0)',
                     transform: 'scale(calc(0.92 + var(--solid-o, 0) * 0.08))',
                   }}
                 >
@@ -213,7 +205,6 @@ export function ActThreeFlow() {
               </div>
             </div>
 
-            {/* Bottom 3-Column Progress Bar (dennypratama.com construction progress style) */}
             <ol className="grid grid-cols-1 gap-6 sm:grid-cols-3 sm:gap-8">
               {CONSTRUCTION_STEPS.map((step) => (
                 <li key={step.idx}>
