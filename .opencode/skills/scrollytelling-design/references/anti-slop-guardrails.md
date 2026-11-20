@@ -1,85 +1,80 @@
-# Depth, Surface Rhythm & Anti-Slop Guardrails
+# Depth, Typography, Copywriting & Anti-Slop Guardrails
 
-This document defines the aesthetic quality floor, tonal surface choreography, and strict **Anti-AI-Slop Guardrails** for scrollytelling websites.
+This document defines the non-negotiable aesthetic, typographic, editorial, and responsive quality floor for scrollytelling websites.
 
 ---
 
-## 1. Strict Bans: What Makes Scroll-Hijacking Look Like "AI Slop"
+## 1. Strict Bans: What Makes Scrollytelling Look Like "AI Slop"
 
 Never ship any of the following patterns:
 
 1. **The Monotonous Slide Deck (Fade-Up Repetition):**
-   - **BANNED:** Stacking 5 `100vh` sections where every section simply fades and slides text up (`translateY(20px -> 0)`) over a static dark background.
-   - **REQUIRED:** Every Act must change the **spatial camera vector** (e.g., Act 1 zooms *in* through a portal -> Act 2 shrinks a monolith *sideways* -> Act 3 peels a sheet *upward* -> Act 4 converges scattered fragments *radially* -> Act 5 physically stacks tactile sheets).
-2. **Unreadable Moving Targets (Zero Dwell Zone):**
-   - **BANNED:** Tying text `translateY` linearly to `progress` across `0.00 -> 1.00` so the user has to chase moving paragraphs or moving buttons with their cursor.
-   - **REQUIRED:** Every headline, body paragraph, and CTA button must lock into a stationary **Dwell Plateau** (`translate3d(0,0,0)`, `opacity: 1`) for a generous scroll window before transitioning out.
-3. **Ghost Overlay Blocking (`pointer-events` Bug):**
-   - **BANNED:** Leaving invisible or faded-out foreground/background layers (`opacity: 0`) with default `pointer-events: auto`, which blocks the user from clicking buttons, copying email addresses, or selecting cards underneath.
-   - **REQUIRED:** Any decorative layer, atmospheric mist veil, or faded-out phase layer must explicitly set `pointer-events-none` (or dynamically toggle `pointer-events-auto` only when `opacity > 0.6`).
-4. **Self-Bragging Technical Badges & Robotic Telemetry:**
-   - **BANNED:** Littering user-facing UI (or companion CMS/Studio Control pages) with self-congratulatory engineering buzzwords or robotic telemetry badges such as `"60FPS Spatial Canvas"`, `"WebGL2 Engine"`, `"Zero-Latency"`, `"PostgreSQL Active"`, `"AES-GCM Encrypted"`, `"Editorial Reveal"`, `"Tactile Stack"`, `"001 / 005 — PORTAL"`, or raw database keys like `"ID: proj-2"`.
-   - **REQUIRED:** Write with a warm, grounded, human voice (*"Selected Works"*, *"What I Do"*, *"Experience & Background"*, *"Private Client Project"*). Let the 60fps smoothness of the interface speak for itself without bragging about it in text badges.
-5. **Abstract AI Vector Slop Inside Gallery Tiles & Project Cards:**
-   - **BANNED:** Filling 3×3 mosaic tiles or project cards with generic abstract SVG boxes, meaningless radar circles, or fake wireframe bars that scream "placeholder AI template", or cluttering outer mosaic tiles with text labels and category pills.
-   - **REQUIRED:** Every project cover and mosaic tile must look like an **authentic dark-mode website hero screenshot or real product interface** (complete with subtle top navigation, strong editorial headline typography, atmospheric focal lighting, and realistic UI chrome). Keep the 8 outer tiles of a 3×3 mosaic **100% pure visual bleed** (zero text overlays).
-6. **Text-Over-Face Collisions & Duplicate Identity Logos:**
-   - **BANNED:** Placing headlines, paragraphs, or CTA buttons directly across the focal subject's face/chest, or rendering a second `[P]` brand logo inside the hero content when the top-left HUD bar already displays the brand logo.
-   - **REQUIRED:** Use **Subject Occlusion** (monumental display type on `Plane 2` behind the cutout subject on `Plane 3`) and anchor all foreground editorial HUD copy (`Plane 4`) in the bottom-left and bottom-right negative space over a subtle bottom vignette. Fade out the corner HUD early (`progress: 0.04 -> 0.20`) before shrinking/docking the hero stage.
-7. **Layout Thrashing & Janky Scroll:**
-   - **BANNED:** Animating CSS `margin`, `padding`, `font-size`, or un-composited `top/left` on complex DOM trees during scroll, or attaching non-passive scroll listeners that block the main thread.
-   - **REQUIRED:** Use `will-change-transform` on moving stage layers and drive motion via `translate3d`, `scale`, `rotate`, and `opacity`.
+   - **BANNED:** Stacking 5 sections where every section simply fades and slides text up (`translateY(20px -> 0)`) over the same background tone.
+   - **REQUIRED:** Alternate both **spatial camera vector** and **tonal room temperature** on every adjacent act.
+2. **Card Soup, Box-in-Box Clutter & Glassmorphism Blur:**
+   - **BANNED:** Wrapping every feature, metric, or list item inside identical rounded cards (`rounded-2xl border bg-white/5 backdrop-blur-md`), or stacking equal 3-card grids on every section.
+   - **REQUIRED:** Use **Architectural Hairline Layouts** (`1px` horizontal dividers, open negative space, full-width display index rows, and at most one focal preview artifact per stage).
+3. **Floating Capsule Pill Clusters:**
+   - **BANNED:** Scattering rows of oval pill buttons (`rounded-full border px-3 py-1`) with colored dots to toggle modes, finishes, or filters—this reads immediately as a generic SaaS dashboard template.
+   - **REQUIRED:** Use **flush architectural hairline tabs** (underline active rules integrated into a frame header or above a live figure) with sharp geometric swatches.
+4. **1:1 Reference Gimmick Cloning:**
+   - **BANNED:** Copying a reference site's exact trademark gimmick, counter format, or corner layout verbatim (e.g., copying `dennypratama.com`'s bottom-center `000°` degree counter + bottom-left `01 / m/01` text stack).
+   - **REQUIRED:** Apply the **Transmute, Never Clone** protocol—use the brand's own custom geometric emblem, domain-native telemetry, and an original spatial layout.
+5. **Number Soup & Stiff Mechanical Jargon:**
+   - **BANNED:** Flooding a screen with 10+ unanchored stats, robotic buzzwords (`"next-gen"`, `"seamless"`, `"effortless"`, `"unlock"`, `"elevate"`, `"zero-latency"`, `"AI-powered"`, `"60FPS Spatial Canvas"`, `"WebGL2 Engine"`), or overly mechanical motherboard/circuit clichés when the product story is human.
+   - **REQUIRED:** **One clear fact per scroll beat**, expressed in plain everyday verbs (*"You tap once. It splits four ways."*, *"Phone off. Still works."*).
+6. **Wrapped Currency / Metric Figures:**
+   - **BANNED:** Allowing a headline figure like `+Rp 216k` or `$12,400` to break onto two lines (`+Rp` on line 1, `216k` on line 2) inside a narrow preview card.
+   - **REQUIRED:** Always pair financial/metric displays with `tabular` (`font-variant-numeric: tabular-nums`) and `whitespace-nowrap`, sizing the figure token (`text-figure` vs. `text-display-md`) to the container width.
+7. **Unreadable Moving Targets & Ghost Overlay Blocking:**
+   - **BANNED:** Continuous linear text drift with zero dwell plateau, or faded-out layers (`opacity: 0`) left with `pointer-events: auto` blocking clicks underneath.
+   - **REQUIRED:** Lock every readable block into a stationary dwell plateau (`>= 15%–25%` of the act), and put `pointer-events-none` on every decorative or inactive layer.
+8. **SSR Pre-Hydration Text Flash & Per-Frame `setState`:**
+   - **BANNED:** Omitting CSS fallback values (`var(--frame-0)` without `, 0`) so hidden dive headlines flash simultaneously at `opacity: 1` on page reload, or calling React `setState(progress)` on every scroll frame.
+   - **REQUIRED:** Use the single-loop CSS custom property engine + explicit `@property` `initial-value` and inline `var(--x, 0)` fallbacks.
 
 ---
 
-## 2. Tonal Surface Rhythm (Alternating Architectural Rooms)
+## 2. Gigantic Editorial Typography & Scale Contrast
 
-A world-class scrollytelling experience (like `13322566869.com`, `GRID`, and `peär.`) uses **bold surface temperature shifts** between acts so the user feels like they are walking through curated architectural spaces:
+Timid mid-sized headings (`40px–56px` bold) paired with 4–5 medium font sizes create visual clutter. High-craft editorial scrollytelling uses **extreme scale contrast** and **eliminates the "muddy middle"**:
 
-### Exemplar Palette Systems
-
-#### A. Editorial Spatial Gallery (`3D-Porto` & `13322566869.com`)
-- **Obsidian / Charcoal (Dark Acts):** `#0e0e10` / `#161618` with `#222226` elevated surfaces and `#f4f3ef` warm ivory ink.
-- **Alabaster / Paper (Light Acts):** `#ffffff` / `#f4f3ef` with `#e4e2da` stone borders and `#121214` deep ink.
-- **Atmospheric Accent Scenes:** Warm Amber/Terracotta (`#f59e0b` / `#c2410c`), Glacial Deep Blue (`#0284c7`), and Emerald (`#10b981`).
-
-#### B. Neo-Classical Blueprint (`peär.`)
-- **Electric Blueprint Cobalt:** `#0E47D8` with `rgba(255,255,255,0.14)` `1px` architectural grid lines, `+` crosshairs, and crisp white serif/sans typography.
-- **Alabaster Drafting Paper:** `#E8EAED` / `#F5F6F8` with `rgba(14,18,24,0.08)` `1px` grid lines and `#0E1218` ink.
-- **Renaissance Oil & Gold Accents:** High-contrast classical chiaroscuro imagery paired with warm gold (`#D4AF37`) and sky blue highlights.
-
-#### C. Tactile Craft & Culinary Contrast (`GRID`)
-- **Warm Parchment Cream:** `#F5F0E6` with `#181818` espresso ink.
-- **Deep Roast Charcoal:** `#181818` with `#F5F0E6` cream ink.
-- **Rich Cocoa & Vermilion Split:** `#5C3A21` warm brown and `#C84B31` terracotta organic accents.
+- **Gigantic Light-Weight Display (Modern Editorial Option):**
+  - Pair huge fluid scales (`clamp(2.5rem, 6.8vw, 6.75rem)` up to `11rem`) with **Light weight (`300`)**, tight negative tracking (`-0.04em` to `-0.055em`), and tight line-height (`0.88–0.92`). Light weight at gigantic scale feels sculptural and calm rather than shouty.
+- **Explore Font Families Freely:**
+  - Do **not** hardcode one font across every project. Choose a **single variable sans** (e.g., `Archivo`, `Instrument Sans`, `Plus Jakarta Sans`, `General Sans`, `Space Grotesk`) OR an intentional **editorial serif + grotesk pairing** (e.g., `Instrument Serif` + `Inter`) that genuinely matches the brand's voice.
+- **Scale Discipline (2–3 Distinct Tiers Per View):**
+  - **Tier 1 (Monumental Statement):** One gigantic focal headline or figure that anchors the room.
+  - **Tier 2 (Calm Human Lead / Body-Sm):** One short, max `45ch–55ch` plain-language paragraph explaining the "why" in `0.875rem–1rem`.
+  - **Tier 3 (Micro Anchors):** Crisp `0.75rem` labels, `1px` rules, and `tabular-nums` figures—never uppercase-eyebrow-above-every-heading clutter.
 
 ---
 
-## 3. The 4-Plane Z-Index Sandwich & Subject Occlusion Checklist
+## 3. Tonal Surface Rhythm (Alternating Architectural Rooms)
 
-When building any sticky stage (`sticky top-0 h-svh w-full overflow-hidden`), structure its JSX children in back-to-front order so the subject physically sits *between* the monumental background type and the foreground corner HUD:
+Shift room temperature cleanly between adjacent acts so each section feels like entering a new physical space. Invent fresh palettes per project rather than reusing one color scheme:
 
-1. **Plane 1 — Chiaroscuro Canvas & Atmospheric Lighting (`z-0`):**
-   - Base surface color (`#09090b`), diagonal tungsten light shaft (`radial-gradient`), or split-screen color wipe.
-2. **Plane 2 — Mid-Back Monumental Context (`z-10`):**
-   - Monumental display typography (`"CODE TO" / "CRAFT"`), sliced SVG emblem arcs, or atmospheric glow gradients that parallax **behind** the hero subject.
-3. **Plane 3 — Foreground Cutout Subject / Interactive Stage (`z-20`):**
-   - The cutout portrait silhouette (which partially occludes Plane 2 typography for true optical depth), evolving product assembly, Bento card convergence grid, or project showcase card, plus a subtle bottom vignette (`chiaroscuro-vignette`).
-4. **Plane 4 — Negative-Space Editorial HUD & Navigation (`z-30` to `z-40`):**
-   - Bottom-corner editorial manifesto, concise bio, tactile action pills, and minimalist chapter navigation dots (`EditorialScrollIndicator`).
+- **Obsidian / Alabaster High-Contrast:** Deep charcoal (`#0c0c0f` / `#18181c`) alternating with warm alabaster (`#f4f4f6` / `#ebebef`) and one disciplined signal accent (e.g., acid lime, electric cobalt, warm tungsten, or vermilion).
+- **Architectural Blueprint:** Electric drafting cobalt (`#0E47D8`) alternating with drafting paper (`#E8EAED`) and `1px` grid crosshairs.
+- **Warm Editorial Craft:** Deep espresso charcoal (`#181818`) alternating with parchment cream (`#F5F0E6`) and terracotta/gold accents.
+- **Color Discipline:** Never use glowing gradients without a visible light source; limit saturated signal accents to **one focal element per viewport**; keep `2%–4%` subtle film grain on dark rooms so dark surfaces read as physical material rather than flat `#000`.
 
 ---
 
-## 4. Typography, Humanized Copywriting & Mobile `100svh` Budget
+## 4. The 4-Plane Z-Index Sandwich Checklist
 
-- **Contrast of Scale:** Pair monumental display headlines (`text-3xl sm:text-5xl lg:text-6xl tracking-tight leading-none`) with compact, high-legibility body copy (`max-w-md` or `max-w-lg`, `text-xs sm:text-sm leading-relaxed`) and clean, natural section labels.
-- **Poetic Staccato Statements & Conversational Bridges:**
-  - In the Hero HUD, use a crisp 3-line staccato manifesto (*"Thoughtful Design. / Clean, Reliable Code. / Built Around Users."*) paired with a left-bordered identity signature.
-  - Between major content acts, use short, conversational 3-to-6 word transitional statements (*"NEXT, LET'S TAKE A LOOK"*, *"ALRIGHT, NEED SOMEONE WHO CAN HANDLE IT ALL?"*).
-- **Mobile & Tablet `100svh` Vertical Density Budget (Keeping Scroll-Hijacking Smooth on Phones):**
-  - Never disable scrollytelling on mobile or tablet—instead, design every `sticky top-0 h-svh overflow-hidden` stage so its entire stacked content fits comfortably inside a `375×667px` mobile screen:
-    1. Convert vertical tag lists (`<ul>`) inside glass cards into horizontal flex-wrap pills on mobile (`flex flex-wrap gap-1.5 sm:block sm:space-y-1`).
-    2. Use responsive thumbnail heights (`h-24 sm:h-36 lg:h-44`) and compact padding (`px-4 pt-20 pb-6 sm:px-10 sm:pt-24 sm:pb-12`).
-    3. Apply `line-clamp-2` or `line-clamp-3` on mobile (`sm:line-clamp-none`) for long descriptions inside `h-svh` stages.
-    4. Use `sm:sticky` on multi-sheet archive stacks (`Archetype 10`) so tall single-column cards flow naturally on phones while stacking tactilely on tablets and desktops.
+Structure every sticky stage (`sticky top-0 h-svh w-full overflow-hidden`) back-to-front:
+1. **Plane 1 (`z-0`):** Base surface, directional light source, or scrubbable diagonal plane.
+2. **Plane 2 (`z-10`):** Monumental display typography, custom 3D brand-emblem monument, or geometric construction guides.
+3. **Plane 3 (`z-20`):** Whole focal product object, interactive CAD frame, or foreground subject occluding Plane 2.
+4. **Plane 4 (`z-30`–`z-40`):** Asymmetric negative-space HUD (fades out early before camera transitions) and floating chapter rail (`section-rail`).
 
+---
+
+## 5. Dual Viewport `100svh` Budget (Laptop `~610px` Height + Mobile `375×667`)
+
+Sticky `h-svh overflow-hidden` stages clip easily on **both** standard Windows laptops (where `1366×768` minus OS taskbar and browser chrome leaves only `~610px–650px` usable height) **and** phones (`375×667`):
+
+1. **Budget Vertical Height Explicitly:** On laptop viewports, keep stage vertical padding compact (`py-6 sm:py-8`), scale repeated index rows with `text-title sm:text-display-md` (not `display-lg` × 4 rows), and verify all rows + bottom bar fit inside `610px` height with breathing room.
+2. **Center Floating Inspectors Vertically:** Never pin a floating preview card to `bottom-0` / `bottom-4` inside `h-svh` where it can slice off at the bottom edge. Wrap it in `md:absolute md:inset-y-0 md:right-0 md:flex md:items-center` so it always centers cleanly without conflicting with inner `transform: translate3d(...)` scroll animations.
+3. **Mobile Compactness:** Keep scrollytelling active on phones (`375×667`) by switching multi-column inspectors to clean compact stacks, capping media heights (`h-24 sm:h-36 lg:h-44`), using `sm:sticky` on tall archive sheets, and keeping `overflow-x: clip` on `html`.

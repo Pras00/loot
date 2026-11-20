@@ -8,7 +8,7 @@ Every scrollytelling website should feel invented for its specific brand and aud
 
 ## The "Transmute, Never Clone" Protocol (Anti-Plagiarism & Exploration Rule)
 
-When a project takes inspiration from an existing award-winning site (such as `dennypratama.com`, `igloo.inc`, `13322566869.com`, `GRID`, or `peär.`), **never copy its signature gimmick, layout coordinates, or visual identity 1:1**. Before writing code, run every borrowed idea through 4 transmutations:
+When a project takes inspiration from an existing award-winning site (such as `loot-autonomous.vercel.app`, `prazzz.vercel.app`, `dennypratama.com`, `igloo.inc`, `13322566869.com`, `GRID`, or `peär.`), **never copy its signature gimmick, layout coordinates, or visual identity 1:1**. Before writing code, run every borrowed idea through 4 transmutations:
 
 1. **Transmute the Geometry:** Replace the reference's monogram, shapes, or mascot with **custom geometry derived from the current product's own logo, form factor, or core mechanism** (e.g., 4 interlocking vault shards that split 4 ways instead of a spinning initials tunnel).
 2. **Transmute the Telemetry:** Replace decorative counters (like a generic `000°` angle or `01 / 05`) with a **real product-truth metric** that teaches something about the product (e.g., `0.00s -> 0.40s` offline authorization time, real-time rupiah split, latency ms, or pressure/temperature).
@@ -28,7 +28,7 @@ $$\text{Bespoke Stage} = \text{Camera Vector} \times \text{Subject Physics} \tim
 ## Axis 1: Camera & Spatial Vector (How the Viewport Moves)
 
 1. **Macro-to-Canopy Pull-Back (Z-Out):** Start zoomed `3.5x` on a microscopic detail (a watch escapement, a stitch, a chip die, a single line of code) and scale down to `1.0x` to reveal the whole ecosystem.
-2. **Counter-Scrolling Split Hemispheres (Opposing Y-Vectors):** Left column translates *downward* while right column translates *upward*, locking together when matching pairs align at center.
+2. **Counter-Scrolling Split Hemispheres (Opposing Y-Vectors):** Left column translates _downward_ while right column translates _upward_, locking together when matching pairs align at center.
 3. **Orbital / Rotary Dial (Polar Coordinate Scroll):** Map scroll `progress` to an angle $\theta = \text{lerp}(0^\circ, 180^\circ, p)$ so artifacts orbit smoothly along a circular arc like a precision lens ring.
 4. **Isometric / Architectural Plane Tilt (3D Perspective):** Tilt a flat 2D schematic (`rotateX(52deg) rotateZ(-28deg)`) and extrude internal layers along the Z-axis.
 5. **Horizontal Panoramic Pan + Depth Parallax:** Translate a wide `300vw` gallery laterally (`translate3d(0 -> -200vw, 0, 0)`) while foreground/background planes move at `1.35x` and `0.65x`.
@@ -42,7 +42,7 @@ $$\text{Bespoke Stage} = \text{Camera Vector} \times \text{Subject Physics} \tim
 2. **Exploded View / Surgical Dissection:** Separate stacked hardware or software layers along an axis (`layerOffset = idx * 48 * t`) with crisp `1px` SVG leader lines to factual spec labels.
 3. **Fidelity Morph (Wireframe → Construction Threads → Solid Product):** Draw `1px` CAD axes and curved construction paths (`stroke-dashoffset`) that solidify seamlessly into the rendered product.
 4. **Fanned Deck / Folio Spread:** Start with stacked sheets at center (`rotate: 0deg`) and fan them into an inspectable arc or horizontal spread during the dwell plateau.
-5. **Equilibrium / Balance Physics:** Two competing forces (e.g., *Speed vs. Accuracy*, *Risk vs. Reserve*) sit on a structural beam that resolves to `0deg` equilibrium as scroll advances.
+5. **Equilibrium / Balance Physics:** Two competing forces (e.g., _Speed vs. Accuracy_, _Risk vs. Reserve_) sit on a structural beam that resolves to `0deg` equilibrium as scroll advances.
 
 ---
 
@@ -72,20 +72,21 @@ Embed live interactive controls that feel native to architectural/editorial desi
 
 Never recycle an unrelated industry's visual metaphor. Invent **1 to 2 bespoke mechanics** rooted in what the product actually does:
 
-| Product / Domain | Custom Scrollytelling Metaphor Examples |
-| :--- | :--- |
-| **FinTech / Treasury / Hardware Card** | Diagonal reality scrubber separating 1 tap from 4 pockets; custom 4-shard emblem splitting during a `0.00s -> 0.40s` chip dive; pixel-exact NFC/EAL6+ CAD X-Ray bench with live rupiah split math. |
-| **Developer Tools / Infra / AI** | Unstructured logs/traces converging into a deterministic pipeline; 2D schema extruding into a live request graph; hairline diff scrubber comparing legacy vs. compiled output. |
-| **Consumer Goods / Culinary / Craft** | Pinned central object assembling layer-by-layer on scroll; macro zoom-out from raw texture grain to finished craft; split-hemisphere flavor/material contrast wipes. |
-| **Architecture / Industrial / Mobility** | Fullscreen spatial elevation docking into a 2D orthographic blueprint; isometric structural floor-stack extrusion; daylight-to-dusk solar lighting temperature scrub. |
-| **Creative Studio / Editorial Portfolio** | Chiaroscuro focal occlusion docking into a full-bleed exhibition mosaic; dark monolith shrinking to reveal an alabaster index; atmospheric mist transitions; tactile stacking archive sheets. |
+| Product / Domain                          | Custom Scrollytelling Metaphor Examples                                                                                                                                                            |
+| :---------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **FinTech / Treasury / Hardware Card**    | Diagonal reality scrubber separating 1 tap from 4 pockets; custom 4-shard emblem splitting during a `0.00s -> 0.40s` chip dive; pixel-exact NFC/EAL6+ CAD X-Ray bench with live rupiah split math. |
+| **Developer Tools / Infra / AI**          | Unstructured logs/traces converging into a deterministic pipeline; 2D schema extruding into a live request graph; hairline diff scrubber comparing legacy vs. compiled output.                     |
+| **Consumer Goods / Culinary / Craft**     | Pinned central object assembling layer-by-layer on scroll; macro zoom-out from raw texture grain to finished craft; split-hemisphere flavor/material contrast wipes.                               |
+| **Architecture / Industrial / Mobility**  | Fullscreen spatial elevation docking into a 2D orthographic blueprint; isometric structural floor-stack extrusion; daylight-to-dusk solar lighting temperature scrub.                              |
+| **Creative Studio / Editorial Portfolio** | Chiaroscuro focal occlusion docking into a full-bleed exhibition mosaic; dark monolith shrinking to reveal an alabaster index; atmospheric mist transitions; tactile stacking archive sheets.      |
 
 ---
 
 ## Improvisation Quality Checklist
 
 Before shipping any newly invented mechanic, verify:
+
 1. **Dwell Plateau:** Can the visitor stop scrolling and comfortably read every headline and interact with every control?
 2. **Deterministic Reversibility:** Are all visual transforms pure functions of `progress ∈ [0, 1]` so scrolling upward reverses every frame cleanly?
-3. **Originality Check:** Does the geometry, telemetry, and layout belong unmistakably to *this* brand rather than copying a reference site?
+3. **Originality Check:** Does the geometry, telemetry, and layout belong unmistakably to _this_ brand rather than copying a reference site?
 4. **Laptop + Mobile Safety:** Do all offsets, floating inspectors, and hairline indices fit inside `100svh` without clipping on both `1366×620` laptops and `375×667` phones?

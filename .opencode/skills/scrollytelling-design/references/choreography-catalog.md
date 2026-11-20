@@ -1,113 +1,100 @@
-# Scrollytelling Choreography Catalog (10 Seed Archetypes)
+# Scrollytelling Choreography Catalog (13 Seed Archetypes)
 
-This catalog documents the **10 foundational scrollytelling archetypes** distilled from four benchmark references:
-1. **`prazzz.vercel.app` (3D-Porto) & `13322566869.com`** (*Editorial Spatial Gallery*)
-2. **`igloo.inc`** (*Atmospheric Mist & Stepped Telemetry Showcase*)
-3. **`GRID` Belgian Waffle Concept** (*Object-Led Progressive Assembly & Split-Stage Wipe*)
-4. **`peär.` Creative Capital Concept** (*Neo-Classical Fine-Art meets Blueprint Grid*)
+This catalog documents **13 foundational scrollytelling archetypes** distilled from award-winning spatial web craft (`13322566869.com`, `igloo.inc`, `GRID`, `peär.`, `dennypratama.com`, and precision fintech/hardware storytelling).
 
-Use these 10 archetypes as **proven building blocks**, and combine or mutate them using the [5-Axis Improvisation Matrix](./improvisation-matrix.md).
+> **Originality Rule:** Treat these 13 archetypes as **structural grammar, never copy-paste templates**. Always transmute the geometry, telemetry, copy, and surface palette to fit the brand using the [5-Axis Improvisation Matrix](./improvisation-matrix.md).
 
 ---
 
-## Archetype 01: Chiaroscuro Subject Occlusion -> 3x3 Mosaic Docking -> Portal Window Dive
-* **Source Inspiration:** `13322566869.com`, Fine-Art Chiaroscuro Portraiture & `PortalWindowHero.tsx`
-* **Best Used For:** Act 1 Hero / Opening Signature Stage.
-* **Spatial Concept:** Instead of starting immediately as a busy 9-tile grid, the hero unfolds across **three seamless spatial phases** inside a `340vh` sticky runway:
-  1. **Act 1A — Full-Screen 4-Plane Chiaroscuro Stage with Subject Occlusion (`0.00 -> 0.16`):**
-     - **Plane 1 (`z-0`):** Deep obsidian canvas (`#09090b`) lit by a warm diagonal tungsten light shaft (`#f59e0b`).
-     - **Plane 2 (`z-10`):** Monumental display typography (`"CODE"` top-left, `"TO"` top-right, `"CRAFT"` centered) rendered **behind** the subject.
-     - **Plane 3 (`z-20`):** Foreground cutout portrait silhouette (`/praz-silhouette.webp`) with warm rim lighting that **physically occludes** the center word (`"CRAFT"`), creating genuine optical depth. Differential parallax moves Plane 2 slightly upward (`0 -> -44px`) and Plane 3 subtly downward/forward (`0 -> +18px`, `scale: 1 -> 1.035`).
-     - **Plane 4 (`z-30`):** Asymmetric corner editorial HUD anchored in the bottom negative space (`bottom-left`: Location/Status, 3-line poetic staccato statement, Name/Role; `bottom-right`: concise bio + tactile pill actions). Plane 4 fades out early (`0.04 -> 0.20`) so it never collides when the stage shrinks.
-  2. **Act 1B — Reverse-Docking into the 3x3 Visual Gallery (`0.16 -> 0.44`, Dwell `0.44 -> 0.56`):**
-     - The full-screen Chiaroscuro stage scales down (`scale: 1 -> 0.315`), rounds its corners (`rounded-none -> rounded-2xl`), and docks directly into **Tile 5 (the Center Portal Window)** of a `3x3` full-bleed visual gallery (`scale: 1.16 -> 1.0`).
-     - All 8 outer tiles display **100% pure full-bleed dark-mode website hero screenshots** (zero text overlays or category clutter on outer tiles), while the center tile displays a clean studio wordmark (`"PRAZ STUDIO"`).
-  3. **Act 1C — Camera Dive Through the Center Portal (`0.56 -> 0.98`):**
-     - The entire `3x3` mosaic scales up (`scale: 1 -> 3.48`) so the center portal expands past the edges of the viewport while the 8 outer tiles fade away, pulling the visitor into Act 2.
+## Archetype 01: Chiaroscuro Focal Occlusion -> 3x3 Mosaic Docking -> Portal Window Dive
+* **Best Used For:** Visual portfolios, creative studios, and gallery-driven Act 1 Heroes.
+* **Spatial Concept (`minHeight: 340svh`):**
+  1. **Phase A (`0.00 -> 0.16`) — 4-Plane Focal Occlusion:** Deep dark canvas (`z-0`), monumental split display typography (`z-10`), foreground cutout subject or artifact (`z-20`) physically occluding the center word with subtle opposing parallax, and an asymmetric bottom-corner HUD (`z-30`) that fades out early (`0.04 -> 0.20`).
+  2. **Phase B (`0.16 -> 0.44`, Dwell `0.44 -> 0.56`) — Reverse-Docking into a 3x3 Visual Grid:** The hero stage scales down (`1 -> 0.315`) and docks into the center tile of a `3x3` full-bleed showcase mosaic. Outer tiles remain 100% pure visual bleed (zero text clutter).
+  3. **Phase C (`0.56 -> 0.98`) — Center Portal Dive:** The mosaic scales up (`1 -> 3.48`) so the center tile expands past the viewport edges while outer tiles dissolve, pulling the visitor into Act 2.
 
 ---
 
 ## Archetype 02: Reverse-Portal / Fullscreen-to-Framed-Card Docking
-* **Source Inspiration:** `peär.` (`00:08 – 00:10`, Fresco Scaffolding -> Framed Square Plan)
-* **Best Used For:** Transitioning from an immersive full-screen visual story into a structured 2-column editorial explanation (e.g., Pricing, Architecture, Philosophy).
-* **Spatial Concept:** The exact inverse of Archetype 01. The stage begins as a `100vw x 100svh` full-bleed visual scene (an illustration, 3D canvas, or photography sequence). As scroll progresses, the camera tilts/zooms out and the entire full-screen canvas **scales down (`scale: 1 -> 0.44`) and translates horizontally (`translateX: 0 -> -24vw`)** to dock neatly inside a framed square/portrait card in the left column, while the right column reveals high-contrast editorial copy on a clean light background.
-* **Phase Timeline (`minHeight: 260vh`):**
-  - `0.00 -> 0.30` (**Fullscreen Immersion**): Full-bleed visual scene fills `100vw x 100svh` with a short overlay caption.
-  - `0.30 -> 0.70` (**Frame Docking**): Scene container animates `width/scale`, `borderRadius` (`0px -> 20px`), and `translate3d` to dock into the left 5 columns of a 12-column grid, adding a crisp architectural border frame.
-  - `0.58 -> 1.00` (**Editorial Dwell**): Right 6 columns fade and slide in with structured headline, body copy, and interactive callouts.
+* **Best Used For:** Transitioning from an immersive full-bleed visual scene into a structured 2-column architectural or editorial explanation.
+* **Phase Timeline (`minHeight: 260svh`):**
+  - `0.00 -> 0.30` (**Fullscreen Immersion**): Full-bleed artwork or interactive canvas fills `100vw × 100svh`.
+  - `0.30 -> 0.70` (**Frame Docking**): Scene scales (`1 -> 0.44`) and translates horizontally (`0 -> -24vw`) to dock into a crisp bordered frame on the left column.
+  - `0.58 -> 1.00` (**Editorial Dwell**): Right column reveals structured headline, plain human copy, and proof figures.
 
 ---
 
 ## Archetype 03: Persistent Central Object Assembly (Object-Led Scrollytelling)
-* **Source Inspiration:** `GRID` Waffle Concept (`00:00 – 00:05`)
-* **Best Used For:** Product features, hardware anatomy, culinary/craft storytelling, or multi-layer software architecture.
-* **Spatial Concept:** A single hero object stays **pinned (`sticky`) in the exact center of the viewport** across 4–5 scroll chapters. Rather than scrolling the object away, each scroll chapter **adds a new layer, attachment, or state** onto the central object while the background and typography behind it morph.
-* **Phase Timeline (`minHeight: 380vh`):**
-  - `0.00 -> 0.20` (**Base State**): Core object floats in center surrounded by a thin orbital SVG ring (`1px` stroke + curved path text).
-  - `0.20 -> 0.45` (**Layer +1 Attachment**): Second component drops/scales onto the core object (`translateY: -120px -> 0`, spring/smoothstep easing) while background splits into contrasting top/bottom halves.
-  - `0.45 -> 0.70` (**Dynamic Pour / Active Stream**): Third element flows from top edge or sides into the center object while headline updates on the left.
-  - `0.70 -> 1.00` (**Final Plated / Assembled State**): A base/pedestal rises from below (`translateY: 80px -> 0`), interactive circular variant tokens appear above, and the completed object settles into a balanced two-column editorial spread.
+* **Best Used For:** Physical products, culinary/craft storytelling, or multi-layer software architecture.
+* **Phase Timeline (`minHeight: 380svh`):** A single hero object remains pinned at viewport center while 3–4 scroll chapters add layers, attachments, or active states onto it (`0.00 -> 0.20` Base → `0.20 -> 0.45` Layer +1 → `0.45 -> 0.70` Active Flow → `0.70 -> 1.00` Assembled Dwell with hairline variant selectors).
 
 ---
 
 ## Archetype 04: Multi-Zone Split Background Wipe (Independent Hemispheres)
-* **Source Inspiration:** `GRID` (`00:01 – 00:04`)
-* **Best Used For:** Comparing dual capabilities, contrasting flavors/modes, or keeping multi-chapter product tours visually electric.
-* **Spatial Concept:** Behind a pinned foreground subject, the background canvas is divided into **Top and Bottom (or Left and Right / Diagonal) zones** that wipe and change color palettes independently (`Cream #F5F0E6` ↔ `Espresso Charcoal #181818` ↔ `Warm Cocoa #5C3A21` ↔ `Terracotta #C84B31`).
-* **Key Detail:** While the top half displays dark-mode typography (`"COLD ON GOLD"`) with dark secondary floating props on the right, the bottom half simultaneously displays light-mode typography (`"BRIGHT BY NATURE"`) with warm abstract SVG shapes—creating a rich magazine spread that shifts planes on scroll.
+* **Best Used For:** Contrasting dual modes, before/after states, or opposing product traits behind a pinned focal object.
+* **Spatial Concept:** Behind a centered foreground subject, the canvas divides into Top/Bottom or Left/Right hemispheres that wipe and switch color temperatures independently, pairing opposing headlines on each side like an editorial magazine spread.
 
 ---
 
 ## Archetype 05: Monolith Shrink & Contrast Curtain Morph
-* **Source Inspiration:** `13322566869.com` & `ContrastCurtainMorph.tsx`
-* **Best Used For:** Act 2 Bridge — transitioning from a dark opening hero into a bright ivory/paper exhibition section (or vice versa).
-* **Spatial Concept:** Starts as a `100%` full-bleed matte charcoal screen with a centered transitional statement. As the user scrolls, the dark screen **insets from the viewport edges (`0px -> 16px`), rounds its corners (`0px -> 24px`), and shrinks its width (`100% -> 27%`)** into a vertical monolith card on the left side, uncovering a bright alabaster/paper canvas underneath with large kinetic typography. Finally, the monolith glides off-screen to the left (`translateX: 0 -> -125%`).
-* **Phase Timeline (`minHeight: 240vh`):**
-  - `0.00 -> 0.28`: Opening statement on dark canvas.
-  - `0.16 -> 0.62`: Dark monolith shrinks to `27%` width, revealing Headline 1 (`"NEXT, LET'S TAKE A LOOK"`) on the bright right-hand canvas.
-  - `0.72 -> 0.98`: Monolith exits left while Headline 1 morphs into Headline 2 (`"Selected works · 001 — 004"`).
+* **Best Used For:** Bridging a dark opening act into a bright alabaster/paper exhibition room (or vice versa).
+* **Phase Timeline (`minHeight: 240svh`):**
+  - `0.00 -> 0.28`: Opening transitional statement on a full-bleed dark canvas.
+  - `0.16 -> 0.62`: Dark surface insets, rounds corners, and shrinks (`100% -> 27%` width) into a left monolith, uncovering a bright paper canvas and kinetic headline on the right.
+  - `0.72 -> 0.98`: Monolith glides off-screen left (`translate3d(-125%, 0, 0)`) as the exhibition headline locks in.
 
 ---
 
-## Archetype 06: Stepped Dwell Showcase + Igloo Atmospheric Mist Sweep
-* **Source Inspiration:** `igloo.inc` & `ExhibitionWorksStage.tsx`
-* **Best Used For:** Selected Works, Case Studies, or Flagship Feature Deep-Dives.
-* **Spatial Concept:** Combines a **Sheet Peel entrance** (`0.00 -> 0.20`) with a **Stepped Dwell Showcase** (`0.21 -> 1.00`). Each project locks solidly in place during its dwell window. When scrolling from Project $i$ to Project $i+1$, a bell-curve **atmospheric mist veil** (`mistIntensity = Math.sin(rawT * Math.PI)`) sweeps across the viewport accompanied by subtle dual-ghost chromatic aberration (`translateX(±10px)` in cyan/amber) and a vertical parallax swap.
-* **Key Formula:**
-  - `transitionRatio = 0.46`
-  - `unit = 1 / (count + (count - 1) * transitionRatio)`
-  - During `local <= dwellWidth`: `blend = 0`, `mistIntensity = 0` (100% rock-solid readability).
-  - During `local > dwellWidth`: `blend = smoothstep(rawT)`, `mistIntensity = Math.sin(rawT * Math.PI)`.
+## Archetype 06: Stepped Dwell Showcase + Atmospheric Mist Sweep
+* **Best Used For:** Flagship Case Studies, Selected Works, or multi-chapter deep dives.
+* **Spatial Concept:** Combines a Sheet Peel entrance (`0.00 -> 0.20`) with **stepped dwell math** (`transitionRatio ≈ 0.46`). Each item locks 100% stationary during its dwell plateau. Between items, a bell-curve atmospheric veil (`Math.sin(rawT * Math.PI)`) sweeps cleanly across the stage while the next item slides into focus.
 
 ---
 
-## Archetype 07: Interactive Object Slicing / Surgical Split-Apart
-* **Source Inspiration:** `peär.` (`00:04 – 00:05`, Golden Pear Sliced in Half) & Hardware Exploded Views
-* **Best Used For:** Explaining business models ("sharing the upside"), system architecture layers, or internal product craftsmanship.
-* **Spatial Concept:** A unified hero object (a golden fruit, a hardware device, a credit card, or a UI stack) sits at the center of an architectural grid. As the user scrolls through the transition range, the object **cleanly separates into two (or more) halves** along a horizontal, vertical, or Z-axis vector (`leftHalf: translateX(-delta)`, `rightHalf: translateX(+delta)`), exposing internal details, annotations, or callout lines between the separated pieces.
+## Archetype 07: Surgical Object Slicing / Split-Apart Dissection
+* **Best Used For:** Explaining internal mechanics, revenue/value splits, or precision hardware engineering.
+* **Spatial Concept:** A unified focal object separates cleanly along an axis (`translateX(±delta)` or Z-extrusion) on scroll, exposing internal geometry, crisp `1px` SVG leader lines, and factual annotations between the halves.
 
 ---
 
 ## Archetype 08: Scattered Fragments Converging to Unified Order
-* **Source Inspiration:** `13322566869.com` & `ScatterConvergeStage.tsx`
-* **Best Used For:** Capabilities, Tech Stack, Ecosystem Integrations, or "How We Bring Everything Together".
-* **Spatial Concept:** Six to eight domain cards and sliced SVG geometric emblem arcs start scattered across the viewport with deterministic 2D offset vectors (`xVw`, `yVh`) and rotations (`deg`). A monumental question sits in the center (`"NEED SOMEONE WHO CAN HANDLE IT?"`). As the user scrolls (`0.10 -> 0.68`), `scatterAmount = 1 - easedRange(p, 0.10, 0.68)` drives all vectors and rotations to `0`, locking the scattered cards into a crisp Bento grid and uniting the sliced SVG arcs into a complete geometric circle.
+* **Best Used For:** Bringing chaotic inputs, integrations, or capabilities into one structured system.
+* **Spatial Concept:** Fragments and sliced SVG emblem arcs begin scattered across the viewport with deterministic 2D offset vectors (`vw/vh`) and rotations. On scroll (`0.10 -> 0.68`), `scatterAmount = 1 - easedRange(p, 0.10, 0.68)` drives all offsets to `0`, snapping fragments into an ordered architectural grid.
 
 ---
 
-## Archetype 09: Blueprint Grid, Point-Cloud Morph & SVG Constellation Graph
-* **Source Inspiration:** `peär.` (`00:00, 00:06–00:07, 00:13–00:16`)
-* **Best Used For:** Process steps, AI/Data intelligence, Roadmap/Application flow, or Neo-Classical/Technical brand storytelling.
-* **Spatial Concept:**
-  1. **Technical Blueprint Surface**: Electric cobalt (`#0E47D8`) or alabaster gray (`#E8EAED`) overlaid with a `1px` architectural grid and `+` crosshair markers at intersections.
-  2. **Halftone / Point-Cloud Subject**: A 3D orstippled ASCII/dot-matrix render of the subject rotates or scales on one side while technical copy sits on the other.
-  3. **Scroll-Drawn Constellation**: As scroll progresses, an SVG path (`stroke-dasharray` / `stroke-dashoffset` driven by `progress`) draws connecting lines between glowing constellation nodes in the sky/canvas, popping open glassmorphic inspector cards at each node (`01`, `02`, `03`).
+## Archetype 09: Blueprint Grid, Point-Cloud Morph & Scroll-Drawn Constellation
+* **Best Used For:** Process architecture, data/AI systems, or technical craft narratives.
+* **Spatial Concept:** A `1px` architectural grid with `+` alignment crosshairs frames a stippled/wireframe subject while scroll-driven SVG paths (`pathLength={1}`, `strokeDashoffset: calc(1 - var(--draw, 0))`) connect numbered nodes into an interactive diagram.
 
 ---
 
 ## Archetype 10: Tactile Physical Stacking Sheets (Adaptive `sm:sticky`)
-* **Source Inspiration:** `13322566869.com` & `StackedArchiveStage.tsx`
-* **Best Used For:** Experience timeline, Highlights, Credentials/Certificates, and Skills Archive near the end of a page.
-* **Spatial Concept:** Uses a 12-column grid where the left 4 columns hold a `lg:sticky lg:top-28` curatorial introduction, and the right 8 columns contain 3–4 full-width `<article>` sheets with incrementing sticky offsets (`sm:sticky sm:top-22`, `sm:top-26`, `sm:top-30`, `sm:top-34`) and alternating tonal surfaces (`bg-gallery-paper`, `bg-gallery-stone`, `bg-gallery-charcoal`).
-* **Responsive Safeguard (`sm:sticky`):** On tablet and desktop (`>= 640px`), each new sheet slides up and physically stacks on top of the previous sheet like tabbed dossier folders. On narrow single-column mobile screens (`< 640px`), where individual sheets are taller than the viewport, `sm:sticky` allows sheets to flow naturally so the bottom half of long experience lists is never covered before the user finishes reading.
+* **Best Used For:** Specifications, timelines, credentials, or structured dossiers near the close of a narrative.
+* **Spatial Concept:** Left 4 columns hold a sticky curatorial intro (`lg:sticky lg:top-28`); right 8 columns hold full-width `<article>` sheets with incrementing sticky offsets (`sm:sticky sm:top-22`, `sm:top-26`, `sm:top-30`) on tablet/desktop while flowing naturally without clipping on single-column mobile.
 
+---
+
+## Archetype 11: Edge-to-Edge Diagonal Reality Scrubber + Brand-Emblem 3D Split Dive
+* **Best Used For:** Product heroes that bridge two realities (e.g., *one action -> four outcomes*, *physical -> digital*, *concept -> production*).
+* **Spatial Concept (`minHeight: 540svh`):**
+  1. **At Rest (`0.00 -> 0.12`) — Full-Bleed Scrubbable Diagonal Plane:** An interactive `0%–100%` edge-to-edge diagonal `clip-path` divides only the background and opposing gigantic light headlines (e.g., left solid room vs. right architectural grid), while the **whole, uncut focal product** sits cleanly in the center in front of a multi-layer 3D monument built from the **brand's own custom geometric emblem**.
+  2. **The Split Dive (`0.08 -> 0.84`) — Custom Emblem Expansion + Domain-Native Telemetry:** As the user scrolls, the hero HUD clears early (`0.06 -> 0.16`), the camera zooms forward through the emblem's central aperture, and the emblem's geometric shards **expand outward into distinct spatial vectors** (e.g., 4 shards separating toward 4 quadrants). A **domain-native pure-CSS `@property` counter** (e.g., chip execution `0.00s -> 0.40s` in a sleek top-center bar) ticks live at 60fps while 3–4 gigantic statements appear sequentially in **alternating quadrants** (never stacked in one predictable corner).
+  3. **Aperture Light Exit (`0.76 -> 0.89`):** A central vanishing-point light expands to hand off seamlessly into the next light-room act.
+
+---
+
+## Archetype 12: Full-Width Architectural Hairline Index + Centered Floating Inspector
+* **Best Used For:** Replacing generic 3- or 4-card grids when showcasing features, categories, pockets, or case studies on a clean light or dark editorial room.
+* **Spatial Concept (`minHeight: 420svh–500svh`):**
+  - Instead of boxed cards, render **3–5 full-width gigantic light-weight typography rows** separated only by crisp `1px` horizontal hairlines (`divide-y border-y`).
+  - Rows reveal sequentially on scroll (`--row-0..3`) and hold a generous dwell plateau (`0.55 -> 1.00`).
+  - Hovering, focusing, or clicking any row shifts it subtly right (`translate-x-2`), illuminates its ink contrast, and live-updates **one single floating inspector card** vertically centered on the right (`md:inset-y-0 md:flex md:items-center`) so nothing ever clips at the bottom of `100svh` laptop screens.
+
+---
+
+## Archetype 13: Progressive Thread Construction + Pixel-Exact CAD X-Ray Scrubber
+* **Best Used For:** Demonstrating how a physical/digital product is engineered from geometry to reality, followed by hands-on interactive inspection.
+* **Spatial Concept (Two-Act Pair):**
+  - **Construction Stage (`minHeight: 460svh–520svh`):** On a drafting-paper room, `1px` construction axes (`--grid-d`), converging Bezier threads (`--threads-d`), and wireframe product/emblem outlines (`--outline-d`) draw progressively via `stroke-dashoffset` before solidifying into the finished object (`--solid-o`), tracked by a 3-column bottom progress rule.
+  - **CAD X-Ray Scrubber (`minHeight: 320svh–360svh`):** A dark studio bench pairing a **pixel-aligned `0%–100%` diagonal scrubber** (left: precision SVG internal X-Ray schematic with real dimensions, traces, and wireframe brand mark; right: live rendered product) with **hairline underline control tabs** (zero floating capsule pills) and a live interactive calculator/simulator.
