@@ -1,105 +1,91 @@
-# 5-Axis Generative Improvisation Matrix
+# 5-Axis Generative Improvisation Matrix & Originality Protocol
 
-The 10 Seed Archetypes in [choreography-catalog.md](./choreography-catalog.md) are **a floor, never a ceiling**.
+The 13 Seed Archetypes in [choreography-catalog.md](./choreography-catalog.md) are **a vocabulary, never a mold**.
 
-To ensure every website we build feels original, tailored to its subject matter, and free of repetitive templates, you **must** actively improvise and invent new scrollytelling choreographies, UI components, and spatial transitions by combining parameters across the **5 Axes** below while strictly obeying the **5 Immutable Laws** in `SKILL.md`.
+Every scrollytelling website should feel invented for its specific brand and audience. Use the **5-Axis Matrix** below to compose fresh mechanics, and apply the **Transmute, Never Clone** protocol whenever drawing inspiration from existing reference sites.
 
 ---
 
-## How to Improvise a New Scrollytelling Act
+## The "Transmute, Never Clone" Protocol (Anti-Plagiarism & Exploration Rule)
 
-To invent a fresh scrollytelling stage, pick **one element from each of the 5 Axes** and bind them to `progress ∈ [0, 1]` using `easedRange`, `lerp`, and `bellCurve`:
+When a project takes inspiration from an existing award-winning site (such as `dennypratama.com`, `igloo.inc`, `13322566869.com`, `GRID`, or `peär.`), **never copy its signature gimmick, layout coordinates, or visual identity 1:1**. Before writing code, run every borrowed idea through 4 transmutations:
 
-$$\text{Bespoke Stage} = \text{Camera Vector} \times \text{Subject Physics} \times \text{Aperture/Surface} \times \text{Scrolly-Widget} \times \text{Domain Metaphor}$$
+1. **Transmute the Geometry:** Replace the reference's monogram, shapes, or mascot with **custom geometry derived from the current product's own logo, form factor, or core mechanism** (e.g., 4 interlocking vault shards that split 4 ways instead of a spinning initials tunnel).
+2. **Transmute the Telemetry:** Replace decorative counters (like a generic `000°` angle or `01 / 05`) with a **real product-truth metric** that teaches something about the product (e.g., `0.00s -> 0.40s` offline authorization time, real-time rupiah split, latency ms, or pressure/temperature).
+3. **Transmute the Spatial Placement:** Move HUD readouts, narrative beats, and controls to a **different spatial rhythm** (e.g., top-center execution strip + quadrant-alternating headlines instead of bottom-center counter + bottom-left text stack).
+4. **Explore Fresh Aesthetic Worlds:** Do not default to the same font (`Archivo`), same diagonal angle (`23.6°`), or same dark-violet-lime palette on future projects. Deliberately explore editorial serifs, Swiss grotesks, kinetic monospace, warm earth/ink palettes, architectural cobalt, or monochromatic print aesthetics depending on the brand.
+
+---
+
+## How to Improvise a Bespoke Scrollytelling Act
+
+Pick **one element from each of the 5 Axes** and bind them to `progress ∈ [0, 1]` inside a pure `choreography.ts` function:
+
+$$\text{Bespoke Stage} = \text{Camera Vector} \times \text{Subject Physics} \times \text{Aperture/Surface} \times \text{Interactive Control} \times \text{Domain Metaphor}$$
 
 ---
 
 ## Axis 1: Camera & Spatial Vector (How the Viewport Moves)
 
-Instead of defaulting to vertical upwards scrolling, choose from or combine these spatial vectors:
-
-1. **Macro-to-Canopy Continuous Pull-Back (Z-Out):**
-   - Start zoomed in `3.5x` on a microscopic detail (a single line of code, a watch gear, a botanical graft, a fabric weave). As the user scrolls, scale down to `1.0x` to reveal the entire ecosystem surrounding that detail.
-2. **Counter-Scrolling Split Hemispheres (Opposing Y-Vectors):**
-   - Divide the sticky stage into two vertical columns: the left column translates *downward* (`translate3d(0, -100% -> 0%, 0)`) while the right column translates *upward* (`translate3d(0, 0% -> -100%, 0)`), locking together when matching pairs align in the center.
-3. **Orbital / Rotary Dial (Polar Coordinate Scroll):**
-   - Convert linear scroll `progress` into an angle $\theta = \text{lerp}(0^\circ, 180^\circ, p)$. Arrange cards, planets, or product nodes along a large circular arc (`translate3d(R * cos(θ), R * sin(θ), 0)`) that rotates like a precision camera lens ring or vinyl turntable as the user scrolls.
-4. **Isometric / Architectural Plane Tilt (3D Perspective):**
-   - Start with a flat 2D technical blueprint or UI wireframe (`rotateX(0deg) rotateZ(0deg)`). On scroll, tilt the plane in 3D perspective (`perspective(1200px) rotateX(52deg) rotateZ(-28deg)`) and extrude vertical layers upward along the Z-axis (`translateZ(40px)`, `translateZ(80px)`).
-5. **Horizontal Gallery Pan + Depth Parallax:**
-   - Translate a wide horizontal panoramic canvas (`width: 300vw`) across the viewport (`translate3d(0 -> -200vw, 0, 0)`) while foreground pillars and background typography move at `1.4x` and `0.6x` parallax multipliers.
+1. **Macro-to-Canopy Pull-Back (Z-Out):** Start zoomed `3.5x` on a microscopic detail (a watch escapement, a stitch, a chip die, a single line of code) and scale down to `1.0x` to reveal the whole ecosystem.
+2. **Counter-Scrolling Split Hemispheres (Opposing Y-Vectors):** Left column translates *downward* while right column translates *upward*, locking together when matching pairs align at center.
+3. **Orbital / Rotary Dial (Polar Coordinate Scroll):** Map scroll `progress` to an angle $\theta = \text{lerp}(0^\circ, 180^\circ, p)$ so artifacts orbit smoothly along a circular arc like a precision lens ring.
+4. **Isometric / Architectural Plane Tilt (3D Perspective):** Tilt a flat 2D schematic (`rotateX(52deg) rotateZ(-28deg)`) and extrude internal layers along the Z-axis.
+5. **Horizontal Panoramic Pan + Depth Parallax:** Translate a wide `300vw` gallery laterally (`translate3d(0 -> -200vw, 0, 0)`) while foreground/background planes move at `1.35x` and `0.65x`.
+6. **Quadrant Aperture Dive (Z-In + Radial Split):** Zoom into the center of a brand emblem while its component shards expand outward toward opposing screen quadrants.
 
 ---
 
-## Axis 2: Focal Subject Physics (How the Hero Object Transforms)
+## Axis 2: Focal Subject Physics (How the Hero Artifact Transforms)
 
-Never leave the main visual static. Give the focal artifact physical behavior tied to scroll:
-
-1. **Exploded View / Surgical Dissection:**
-   - Start with a unified product, interface, or emblem. As scroll progresses from `0.20 -> 0.65`, separate its constituent layers along an axis (`layerOffset = idx * 48 * easedRange(p, 0.2, 0.65)`) and draw thin SVG leader lines (`1px` dashed/solid) to floating spec labels on the left and right. Optionally re-assemble (`0.75 -> 0.95`) using `bellCurve(p, 0.15, 0.90)`.
-2. **Fidelity Morph (Wireframe → Point-Cloud → Photorealistic/Live UI):**
-   - Layer three representations of the same subject on top of each other:
-     - *Phase A (`0.00 -> 0.35`):* Technical `1px` blueprint wireframe / CAD outline.
-     - *Phase B (`0.30 -> 0.68`):* Stippled halftone / ASCII / particle dot-matrix mesh.
-     - *Phase C (`0.62 -> 1.00`):* Full-color tactile render or live interactive component.
-3. **Accordion / Fanned Deck Expansion:**
-   - Start with 5 cards tightly stacked as a single deck at the center (`rotate: 0deg, translateX: 0`). On scroll, fan them out into an arc or horizontal spread (`translateX: (i - 2) * 220px`, `rotate: (i - 2) * 6deg`) so the user can inspect and click any card during the dwell plateau.
-4. **Pendulum / Balance Scale Physics:**
-   - Two competing concepts (e.g., *Speed vs. Security*, *Risk vs. Upside*, *Cost vs. Quality*) sit on a structural beam that tilts and re-balances to `0deg` equilibrium as scroll progresses.
+1. **Brand-Emblem Shard Expansion:** Deconstruct a custom geometric logo into its meaningful parts (e.g., 2, 3, or 4 shards) that separate along purposeful vectors on scroll and re-converge in a later construction act.
+2. **Exploded View / Surgical Dissection:** Separate stacked hardware or software layers along an axis (`layerOffset = idx * 48 * t`) with crisp `1px` SVG leader lines to factual spec labels.
+3. **Fidelity Morph (Wireframe → Construction Threads → Solid Product):** Draw `1px` CAD axes and curved construction paths (`stroke-dashoffset`) that solidify seamlessly into the rendered product.
+4. **Fanned Deck / Folio Spread:** Start with stacked sheets at center (`rotate: 0deg`) and fan them into an inspectable arc or horizontal spread during the dwell plateau.
+5. **Equilibrium / Balance Physics:** Two competing forces (e.g., *Speed vs. Accuracy*, *Risk vs. Reserve*) sit on a structural beam that resolves to `0deg` equilibrium as scroll advances.
 
 ---
 
 ## Axis 3: Surface, Masking & Aperture (How Scenes Reveal)
 
-Replace standard opacity crossfades with architectural apertures:
-
-1. **Typographic Aperture / Giant Letterform Portal:**
-   - Mask a full-screen video, 3D scene, or vibrant artwork inside an oversized display wordmark (e.g., `clip-path` or high-contrast SVG mask). On scroll, scale the letterform from `1x` to `25x` so the camera flies *through* the negative space of the letter into the scene inside.
-2. **Iris / Geometric Clip-Path Expansion:**
-   - Reveal the next contrasting tonal act via an expanding CSS `clip-path`:
-     - Circular iris: `clip-path: circle(${lerp(0, 140, t)}% at 50% 50%)`
-     - Architectural arch or diamond polygon morphing to full-bleed `inset(0% 0% 0% 0% round 0px)`.
-3. **Venetian Louver / Slatted Blind Wipe:**
-   - Slice a canvas into 5–8 vertical or horizontal architectural louvers that flip or slide sequentially with staggered ranges (`easedRange(p, i * 0.06, 0.5 + i * 0.06)`).
-4. **Split Curtain Reveal (Center-Out):**
-   - The current canvas splits down the vertical centerline; left half slides to `-50vw` and right half slides to `+50vw`, uncovering the next act waiting underneath in the center.
+1. **Edge-to-Edge Diagonal Reality Split (`clip-path: polygon(...)`):** Divide a viewport diagonally between two contrasting worlds (solid vs. blueprint, before vs. after) that the user can scrub freely from `0%` to `100%`.
+2. **Typographic Aperture / Giant Letterform Portal:** Mask artwork or a contrasting room inside an oversized display character and scale it from `1x` to `25x` so the visitor flies through its negative space.
+3. **Iris / Geometric Clip-Path Expansion:** Reveal the next tonal room via an expanding circular iris (`clip-path: circle(...)`) or architectural polygon morphing to full-bleed.
+4. **Lateral Curtain Wipe (`clip-path: inset(...)`):** Sweep a contrasting room horizontally or vertically over the outgoing stage during an overlap window.
+5. **Venetian Louver / Split Curtain Reveal:** Part a stage center-out (`-50vw` / `+50vw`) or across staggered architectural louvers.
 
 ---
 
-## Axis 4: Interactive Scrolly-Widgets (UI Components Inside the Stage)
+## Axis 4: Direct-Manipulation Scrolly-Widgets (Zero Pill Clutter)
 
-A scrollytelling stage should not be a passive movie—embed **live, interactive micro-components** that respond to *both* scroll position and direct user clicks/hovers during dwell plateaus:
+Embed live interactive controls that feel native to architectural/editorial design—**never generic glassmorphic popups or floating capsule pill clusters**:
 
-1. **Scroll-Synced Code / Terminal Compiler:**
-   - As the user scrolls, lines of code or terminal commands type/highlight on the left while the rendered UI preview on the right dynamically mutates its state, theme, or 3D geometry in real time.
-2. **Interactive Node / Constellation Inspector:**
-   - An SVG network or trajectory path draws itself on scroll (`strokeDashoffset`). Each node (`01`, `02`, `03`) automatically highlights when scroll passes its threshold, AND users can click any node directly to inspect its glassmorphic detail card.
-3. **Live Telemetry & Scrubbable Metric Gauges:**
-   - Numbers, radial dials, latency bars, or financial split calculators that interpolate smoothly (`lerp(startVal, endVal, t)`) with `tabular-nums` monospace precision as scroll advances.
-4. **Dual-Control Stage Switcher (Scroll + Pill Click):**
-   - Pair stepped scroll chapters with clickable floating pills (like the flavor tokens in `GRID` or project pills in `ExhibitionWorksStage`) that call `scrollToProgress(targetRatio)` when clicked—bridging scroll-hijacking and traditional click navigation seamlessly.
+1. **Pixel-Exact CAD X-Ray Scrubber:** A `0%–100%` draggable diagonal slicer overlaying a precision SVG internal schematic directly onto the live rendered product, with **flush hairline underline tabs** integrated into the frame header.
+2. **Full-Width Hairline Index + Floating Inspector:** Interactive `1px`-divided display rows where hover/focus updates a single vertically centered detail card.
+3. **Scroll-Synced Live Simulator / Calculator:** A native `<input type="range">` or hairline tab switcher that computes real domain math (currency splits, latency budgets, physics outputs) with `tabular-nums` and `whitespace-nowrap`.
+4. **Pure-CSS `@property` Telemetry Rail:** Live numeric counters driven directly by the scroll engine's integer custom properties (zero React `setState` per frame).
+5. **Scroll-Synced Code / State Inspector:** As scroll advances, crisp code or rules highlight on one side while the live artifact mutates on the other.
 
 ---
 
-## Axis 5: Domain Metaphor Invention (Mandatory Customization Rule)
+## Axis 5: Domain Metaphor Invention (Mandatory Per-Project Rule)
 
-Whenever designing a website for a specific industry or brief, **never copy a metaphor from an unrelated industry**. Invent at least **1 to 2 custom scroll mechanics** that dramatize the product's core value proposition:
+Never recycle an unrelated industry's visual metaphor. Invent **1 to 2 bespoke mechanics** rooted in what the product actually does:
 
 | Product / Domain | Custom Scrollytelling Metaphor Examples |
 | :--- | :--- |
-| **Developer Tools / SaaS / AI** | Chaotic raw logs/JSON fragments converging into a clean structured dashboard; a 2D wireframe extruding into a 3D system architecture; latency benchmarks racing across a blueprint grid. |
-| **FinTech / Venture / Web3** | A golden asset slicing into transparent revenue-share proportions (`peär.`); a vault aperture unlocking on scroll; real-time ledger nodes linking into a verified chain. |
-| **F&B / Craft / Consumer Goods** | Pinned central product with progressive ingredient assembly & liquid pour (`GRID`); macro zoom-out from raw material grain to finished plated product; split-screen flavor contrast wipes. |
-| **Architecture / Interior / Industrial** | Fullscreen courtyard scene scaling down into a framed 2D floorplan (`peär.`); isometric elevation layers stacking from foundation to roof; daylight-to-dusk lighting temperature morph. |
-| **Creative Studio / Portfolio** | 3x3 mosaic portal window dive (`13322566869.com`); dark monolith shrinking to reveal alabaster exhibition gallery; Igloo mist transitions between flagship works; tactile stacking dossier sheets. |
+| **FinTech / Treasury / Hardware Card** | Diagonal reality scrubber separating 1 tap from 4 pockets; custom 4-shard emblem splitting during a `0.00s -> 0.40s` chip dive; pixel-exact NFC/EAL6+ CAD X-Ray bench with live rupiah split math. |
+| **Developer Tools / Infra / AI** | Unstructured logs/traces converging into a deterministic pipeline; 2D schema extruding into a live request graph; hairline diff scrubber comparing legacy vs. compiled output. |
+| **Consumer Goods / Culinary / Craft** | Pinned central object assembling layer-by-layer on scroll; macro zoom-out from raw texture grain to finished craft; split-hemisphere flavor/material contrast wipes. |
+| **Architecture / Industrial / Mobility** | Fullscreen spatial elevation docking into a 2D orthographic blueprint; isometric structural floor-stack extrusion; daylight-to-dusk solar lighting temperature scrub. |
+| **Creative Studio / Editorial Portfolio** | Chiaroscuro focal occlusion docking into a full-bleed exhibition mosaic; dark monolith shrinking to reveal an alabaster index; atmospheric mist transitions; tactile stacking archive sheets. |
 
 ---
 
 ## Improvisation Quality Checklist
 
-Before finalizing any newly improvised scroll mechanic, verify:
-1. **Does it have a clear Dwell Plateau?** Can the user stop scrolling in the middle and comfortably read the headline and click the CTA?
-2. **Is the motion driven by `scrollMath.ts`?** Are all transforms computed purely as deterministic functions of `progress ∈ [0, 1]` so scrolling backward reverses the animation with 100% mathematical precision?
-3. **Is it distinct from the adjacent Acts?** Does it change camera vector and surface tone compared to the section before and after it?
-4. **Does it degrade gracefully on mobile & `prefers-reduced-motion`?** On narrow screens (`< 768px`), keep scatter/split offsets within viewport bounds (`vw/vh` clamped) so no horizontal overflow occurs.
-
+Before shipping any newly invented mechanic, verify:
+1. **Dwell Plateau:** Can the visitor stop scrolling and comfortably read every headline and interact with every control?
+2. **Deterministic Reversibility:** Are all visual transforms pure functions of `progress ∈ [0, 1]` so scrolling upward reverses every frame cleanly?
+3. **Originality Check:** Does the geometry, telemetry, and layout belong unmistakably to *this* brand rather than copying a reference site?
+4. **Laptop + Mobile Safety:** Do all offsets, floating inspectors, and hairline indices fit inside `100svh` without clipping on both `1366×620` laptops and `375×667` phones?

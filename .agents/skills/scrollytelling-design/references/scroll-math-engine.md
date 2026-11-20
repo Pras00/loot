@@ -1,255 +1,287 @@
-# Scroll Math & Physics Engine (`scrollMath.ts`)
+# Scroll Math & Zero-Re-Render CSS Custom Property Engine
 
-All scrollytelling stages must be driven by a deterministic, dependency-free **Scroll Math & Physics Engine** that converts native browser scroll position into a damped, normalized progress value $p \in [0, 1]$.
+All scrollytelling stages must be driven by a **single, page-wide, dependency-free scroll engine** that writes CSS custom properties directly to stage DOM nodes—**zero React `setState` per animation frame**.
 
-Why this architecture outperforms heavy scroll-jacking libraries:
-- **Native Scrollbar Integrity**: The user keeps native trackpad momentum, touch scrolling, keyboard `PageDown`/`Space` navigation, and browser find-in-page.
-- **Frame-Rate Independent Exponential Damping**: Smooths out discrete mouse-wheel ticks (`alpha = 1 - Math.exp(-dampingRate * dt)`) without lag on 60Hz, 120Hz ProMotion, or 144Hz displays.
-- **100% Reversible**: Every visual property (`translate3d`, `scale`, `rotate`, `opacity`) is a pure mathematical function of `progress`. Scrolling up reverses every animation frame-accurately.
-- **Zero-Cost Idle**: The `requestAnimationFrame` loop automatically terminates (`rafRef.current = null`) the instant `Math.abs(delta) < 0.0004`, consuming 0% CPU/GPU when the user stops scrolling.
+Why this architecture outperforms both heavy scroll-jacking libraries and per-component `useState(progress)` hooks:
+- **Zero Per-Frame React Re-Renders**: React only renders on semantic state changes (active chapter dot, selected tab, slider input), never 60–120 times per second during scroll.
+- **Single Listener + Batched Read/Write**: One passive `scroll` listener and one `requestAnimationFrame` loop read all `getBoundingClientRect()` values together before writing any `style.setProperty(...)`, eliminating layout thrashing.
+- **Native Scrollbar Integrity**: Preserves native trackpad momentum, touch inertia, keyboard `PageDown`/`Space`, and browser find-in-page.
+- **Frame-Rate Independent Exponential Damping**: Smooths discrete wheel ticks (`alpha = 1 - Math.exp(-damping * dt)`) consistently across 60Hz, 120Hz, and 144Hz displays.
+- **0% Idle CPU**: The rAF loop terminates automatically once `Math.abs(delta) < 0.0004`.
 
 ---
 
-## Complete Reference Implementation (`src/components/scrollytelling/scrollMath.ts`)
+## Architecture Overview (3 Small Files in `src/lib/scroll/`)
 
-Copy or adapt this module in any React / Next.js project:
+1. **`math.ts`** — Pure deterministic easing functions (`clamp`, `lerp`, `smoothstep`, `rangeProgress`, `easedRange`, `bellCurve`, `css`).
+2. **`engine.ts`** — Single page-wide scheduler (`registerStage`, `subscribeActiveAct`, `scrollToChapter`).
+3. **`use-stage.ts`** — Thin React hook that binds a section `ref` to its pure `choreography.ts` function.
 
-```tsx
-'use client';
+---
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+## 1. Pure Scroll Math (`src/lib/scroll/math.ts`)
 
-/** Clamps a number between [min, max]. */
+```ts
 export function clamp(value: number, min: number, max: number): number {
-  return Math.max(min, Math.min(max, value));
+  return Math.min(max, Math.max(min, value));
 }
 
-/** Linear interpolation between start and end for t in [0, 1]. */
 export function lerp(start: number, end: number, t: number): number {
   return start + (end - start) * t;
 }
 
-/** C1-continuous Hermite smoothstep (3t^2 - 2t^3) for organic acceleration/deceleration. */
+/** C1-continuous Hermite smoothstep (3t^2 - 2t^3). */
 export function smoothstep(t: number): number {
-  const c = clamp(t, 0, 1);
-  return c * c * (3 - 2 * c);
+  const x = clamp(t, 0, 1);
+  return x * x * (3 - 2 * x);
 }
 
-/** Maps a global progress value [0, 1] into a normalized sub-range [start, end] -> [0, 1]. */
 export function rangeProgress(value: number, start: number, end: number): number {
   if (end <= start) return value >= end ? 1 : 0;
   return clamp((value - start) / (end - start), 0, 1);
 }
 
-/** Maps a global progress value into a smoothstepped sub-range [start, end] -> [0, 1]. */
 export function easedRange(value: number, start: number, end: number): number {
   return smoothstep(rangeProgress(value, start, end));
 }
 
-/**
- * Generates a smooth 0 -> 1 -> 0 bell curve over [start, end] peaking at the midpoint.
- * Ideal for atmospheric mist bursts, temporary chromatic shifts, or midpoint scale pulses.
- */
+/** 0 -> 1 -> 0 over [start, end], peaking at the midpoint. */
 export function bellCurve(value: number, start: number, end: number): number {
-  const t = rangeProgress(value, start, end);
-  return Math.sin(t * Math.PI);
+  return Math.sin(rangeProgress(value, start, end) * Math.PI);
 }
 
-export interface UseSectionScrollResult {
-  readonly sectionRef: React.RefObject<HTMLElement | null>;
-  readonly progress: number;
-  readonly reducedMotion: boolean;
-  readonly scrollToProgress: (targetRatio: number) => void;
+/** Fixed-decimal string for CSS custom properties. */
+export function css(value: number, decimals = 3): string {
+  return value.toFixed(decimals);
+}
+```
+
+---
+
+## 2. Single-Loop Batched Scheduler (`src/lib/scroll/engine.ts`)
+
+```ts
+'use client';
+
+import { clamp } from './math';
+
+export type StageVars = Readonly<Record<`--${string}`, string>>;
+export type StageChoreography = (progress: number) => StageVars;
+
+interface StageBinding {
+  readonly el: HTMLElement;
+  readonly damping: number;
+  readonly choreography: StageChoreography;
+  readonly applied: Map<string, string>;
+  target: number;
+  value: number;
 }
 
-/**
- * Tracks normalized scroll progress [0..1] through a tall <section> runway
- * containing a `sticky top-0 h-svh` stage, with exponential damping and
- * automatic `prefers-reduced-motion` support.
- */
-export function useSectionScrollProgress(
-  dampingRate: number = 11.5
-): UseSectionScrollResult {
-  const sectionRef = useRef<HTMLElement | null>(null);
-  const [progress, setProgress] = useState<number>(0);
-  const [reducedMotion, setReducedMotion] = useState<boolean>(false);
+const REST_THRESHOLD = 0.0004;
+const DEFAULT_DAMPING = 11.5;
 
-  const targetRef = useRef<number>(0);
-  const currentRef = useRef<number>(0);
-  const rafRef = useRef<number | null>(null);
-  const lastTimeRef = useRef<number>(0);
+const bindings = new Set<StageBinding>();
+const actListeners = new Set<(id: string) => void>();
+let currentActiveAct = 'origin';
+let frameHandle: number | null = null;
+let lastTimestamp = 0;
+let motionQuery: MediaQueryList | null = null;
+let listening = false;
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
+function prefersReducedMotion(): boolean {
+  if (motionQuery === null && typeof window !== 'undefined') {
+    motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  }
+  return motionQuery?.matches ?? false;
+}
 
-    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const syncMotion = (): void => {
-      setReducedMotion(motionQuery.matches);
-    };
-    syncMotion();
+/** Writes only custom properties whose value actually changed. */
+function apply(binding: StageBinding): void {
+  const vars = binding.choreography(binding.value);
+  for (const [key, raw] of Object.entries(vars)) {
+    if (binding.applied.get(key) === raw) continue;
+    binding.el.style.setProperty(key, raw);
+    binding.applied.set(key, raw);
+  }
+  for (const key of binding.applied.keys()) {
+    if (!(key in vars)) {
+      binding.el.style.removeProperty(key);
+      binding.applied.delete(key);
+    }
+  }
+}
 
-    const tick = (now: number): void => {
-      const dt =
-        lastTimeRef.current > 0
-          ? Math.min(0.05, (now - lastTimeRef.current) / 1000)
-          : 1 / 60;
-      lastTimeRef.current = now;
+function schedule(): void {
+  if (frameHandle !== null) return;
+  frameHandle = window.requestAnimationFrame(tick);
+}
 
-      const delta = targetRef.current - currentRef.current;
-      if (Math.abs(delta) < 0.0004) {
-        currentRef.current = targetRef.current;
-        setProgress(targetRef.current);
-        rafRef.current = null;
-        lastTimeRef.current = 0;
-        return;
+function tick(timestamp: number): void {
+  frameHandle = null;
+  const dt = lastTimestamp === 0 ? 1 / 60 : Math.min(0.05, (timestamp - lastTimestamp) / 1000);
+  lastTimestamp = timestamp;
+  const reduced = prefersReducedMotion();
+  const viewportHeight = window.innerHeight;
+
+  // 1. Batched READ phase (geometry only)
+  const reads: Array<{ binding: StageBinding; top: number; height: number }> = [];
+  for (const binding of bindings) {
+    const rect = binding.el.getBoundingClientRect();
+    reads.push({ binding, top: rect.top, height: binding.el.offsetHeight });
+  }
+
+  let moving = false;
+  for (const read of reads) {
+    const scrollable = Math.max(1, read.height - viewportHeight);
+    const target = clamp(-read.top / scrollable, 0, 1);
+    read.binding.target = target;
+
+    const delta = target - read.binding.value;
+    if (reduced || Math.abs(delta) < REST_THRESHOLD) {
+      read.binding.value = target;
+      continue;
+    }
+    read.binding.value += delta * (1 - Math.exp(-read.binding.damping * dt));
+    moving = true;
+  }
+
+  // 2. Batched WRITE phase (CSS custom properties only)
+  for (const read of reads) apply(read.binding);
+
+  if (moving) schedule();
+  else lastTimestamp = 0;
+}
+
+export function registerStage(
+  el: HTMLElement,
+  choreography: StageChoreography,
+  damping: number = DEFAULT_DAMPING,
+): () => void {
+  if (prefersReducedMotion()) return () => {};
+
+  const binding: StageBinding = {
+    el,
+    damping,
+    choreography,
+    applied: new Map<string, string>(),
+    target: 0,
+    value: 0,
+  };
+  bindings.add(binding);
+
+  if (!listening) {
+    listening = true;
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule, { passive: true });
+  }
+
+  // Immediate initial measure so styles settle on mount
+  const rect = el.getBoundingClientRect();
+  const scrollable = Math.max(1, el.offsetHeight - window.innerHeight);
+  binding.value = binding.target = clamp(-rect.top / scrollable, 0, 1);
+  apply(binding);
+  schedule();
+
+  return () => {
+    bindings.delete(binding);
+    binding.applied.clear();
+    if (bindings.size === 0 && listening) {
+      listening = false;
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+      if (frameHandle !== null) {
+        window.cancelAnimationFrame(frameHandle);
+        frameHandle = null;
       }
-
-      const alpha = 1 - Math.exp(-dampingRate * dt);
-      const next = currentRef.current + delta * alpha;
-      currentRef.current = next;
-      setProgress(next);
-      rafRef.current = window.requestAnimationFrame(tick);
-    };
-
-    const measure = (immediate: boolean): void => {
-      const el = sectionRef.current;
-      if (!el) return;
-
-      const rect = el.getBoundingClientRect();
-      const scrollable = Math.max(1, el.offsetHeight - window.innerHeight);
-      const raw = clamp(-rect.top / scrollable, 0, 1);
-      targetRef.current = raw;
-
-      if (immediate || motionQuery.matches) {
-        currentRef.current = raw;
-        setProgress(raw);
-        return;
-      }
-
-      if (rafRef.current === null) {
-        lastTimeRef.current = 0;
-        rafRef.current = window.requestAnimationFrame(tick);
-      }
-    };
-
-    const handleScrollOrResize = (): void => measure(false);
-
-    measure(true);
-    window.addEventListener('scroll', handleScrollOrResize, { passive: true });
-    window.addEventListener('resize', handleScrollOrResize, { passive: true });
-    motionQuery.addEventListener('change', syncMotion);
-
-    return () => {
-      window.removeEventListener('scroll', handleScrollOrResize);
-      window.removeEventListener('resize', handleScrollOrResize);
-      motionQuery.removeEventListener('change', syncMotion);
-      if (rafRef.current !== null) {
-        window.cancelAnimationFrame(rafRef.current);
-      }
-    };
-  }, [dampingRate]);
-
-  const scrollToProgress = useCallback(
-    (targetRatio: number): void => {
-      const el = sectionRef.current;
-      if (!el || typeof window === 'undefined') return;
-
-      const rect = el.getBoundingClientRect();
-      const sectionTop = window.scrollY + rect.top;
-      const scrollable = Math.max(0, el.offsetHeight - window.innerHeight);
-      const destination = sectionTop + scrollable * clamp(targetRatio, 0, 1);
-
-      window.scrollTo({
-        top: Math.max(0, destination),
-        behavior: reducedMotion ? 'auto' : 'smooth',
-      });
-    },
-    [reducedMotion]
-  );
-
-  return {
-    sectionRef,
-    progress,
-    reducedMotion,
-    scrollToProgress,
+      lastTimestamp = 0;
+    }
   };
 }
 ```
 
 ---
 
-## Essential Choreography Math Patterns
-
-### 1. Enter -> Dwell -> Exit Window (3-Phase Element Lifecycle)
-To make a headline or card enter smoothly, stay locked at `100%` opacity and `0px` offset during its **Dwell Plateau**, and then exit cleanly:
+## 3. React Hook (`src/lib/scroll/use-stage.ts`)
 
 ```ts
-// Enters during [0.25 -> 0.42], dwells cleanly during [0.42 -> 0.68], exits during [0.68 -> 0.84]
-const enterT = easedRange(progress, 0.25, 0.42);
-const exitT = easedRange(progress, 0.68, 0.84);
+'use client';
 
+import { useEffect, type RefObject } from 'react';
+import { registerStage, type StageChoreography } from './engine';
+
+export function useStage(
+  ref: RefObject<HTMLElement | null>,
+  choreography: StageChoreography,
+  damping = 11.5,
+): void {
+  useEffect(() => {
+    const el = ref.current;
+    if (el === null) return;
+    return registerStage(el, choreography, damping);
+  }, [ref, choreography, damping]);
+}
+```
+
+---
+
+## 4. Mandatory SSR Pre-Hydration Fallback Discipline (Anti-Flash Law)
+
+Because `useStage` runs in `useEffect` *after* initial HTML paint, **any custom property without a fallback default will resolve as invalid on SSR**, causing `opacity: var(--frame-0)` to fall back to `opacity: 1` and flash overlapping hidden text on every reload!
+
+**Always apply BOTH safeguards:**
+1. **Inline CSS Fallback Defaults** on every scroll-driven element:
+   - Hidden-at-load elements: `opacity: 'var(--frame-0, 0)'`, `opacity: 'var(--stage-o, 0)'`
+   - Visible-at-load elements: `opacity: 'var(--hud-o, 1)'`, `transform: 'scale(var(--card-s, 1))'`
+2. **Typed `@property` Initial Values** in `globals.css`:
+```css
+@property --p       { syntax: "<number>";  inherits: true; initial-value: 0; }
+@property --frame-0 { syntax: "<number>";  inherits: true; initial-value: 0; }
+@property --ms-num  { syntax: "<integer>"; inherits: true; initial-value: 0; }
+```
+
+---
+
+## 5. Pure-CSS 60fps Live Counters (`@property` + `counter()`)
+
+To animate a ticking number during scroll (e.g., `0.00s -> 0.40s` chip execution time, percentage, or depth) with **zero React renders**:
+
+```css
+@property --ms-num {
+  syntax: "<integer>";
+  inherits: true;
+  initial-value: 0;
+}
+
+.ms-counter::before {
+  counter-reset: ms var(--ms-num, 0);
+  content: "0." counter(ms, decimal-leading-zero) "s";
+}
+```
+Emit `'--ms-num': String(Math.round(lerp(0, 40, dive)))` inside `choreography.ts`.
+
+---
+
+## 6. Zero-Seam Stage Overlap & Stepped Dwell Math
+
+### Zero-Seam Overlap Between Consecutive Sticky Acts
+When Act $N+1$ wipes or fades directly over Act $N$ with zero dead scroll space:
+- Give Act $N+1$ an overlap class (`margin-top: -150svh;`) and higher `z-index` (`z-20`, `z-30`, `z-40`).
+- Gate its visibility in `choreography.ts` (`'--stage-o': css(p <= 0.002 ? 0 : 1, 2)`) and put `pointer-events-none` on the outer `<section>` and `pointer-events-auto` on the visible inner surface so it never blocks buttons in Act $N$.
+
+### Enter -> Dwell -> Exit Window (3-Phase Element Lifecycle)
+```ts
+const enterT = easedRange(p, 0.25, 0.42);
+const exitT = easedRange(p, 0.68, 0.84);
 const opacity = enterT * (1 - exitT);
-const translateY = lerp(32, 0, enterT) + lerp(0, -28, exitT);
+const yRem = lerp(1.5, 0, enterT) + lerp(0, -1.25, exitT);
 ```
-*Notice that for `progress ∈ [0.42, 0.68]`, `enterT = 1` and `exitT = 0`, which guarantees `opacity = 1` and `translateY = 0`—a rock-solid dwell plateau!*
+During `p ∈ [0.42, 0.68]`, `opacity = 1` and `yRem = 0`—a rock-solid dwell plateau.
 
-### 2. Multi-Item Stepped Dwell vs. Transition Math (`computeSteppedTransition`)
-When cycling through $N$ items (projects, product flavors, chapters) inside a single sticky stage:
+### Multi-Item Stepped Dwell Math (`computeSteppedTransition`)
+For $N$ items in one sticky stage, use `transitionRatio = 0.46`, `unit = 1 / (count + (count - 1) * transitionRatio)`, `dwellWidth = unit`, `stride = unit * (1 + transitionRatio)`. During `local <= dwellWidth`, `blend = 0` and `burstIntensity = 0`. During transition, `blend = smoothstep(rawT)` and `burstIntensity = Math.sin(rawT * Math.PI)`.
 
-```ts
-export interface SteppedTransitionState {
-  readonly fromIndex: number;
-  readonly toIndex: number;
-  readonly blend: number;        // 0 during dwell, smoothstep(0..1) during transition
-  readonly burstIntensity: number; // 0 during dwell, sin(t * PI) peaking at 1.0 mid-transition
-  readonly activeIndex: number;
-}
-
-export function computeSteppedTransition(
-  progress: number,
-  count: number,
-  transitionRatio: number = 0.46
-): SteppedTransitionState {
-  if (count <= 1) {
-    return { fromIndex: 0, toIndex: 0, blend: 0, burstIntensity: 0, activeIndex: 0 };
-  }
-
-  const unit = 1 / (count + (count - 1) * transitionRatio);
-  const dwellWidth = unit;
-  const transWidth = unit * transitionRatio;
-  const stride = dwellWidth + transWidth;
-
-  const p = clamp(progress, 0, 1);
-  const seg = Math.min(count - 1, Math.floor(p / stride));
-  const local = p - seg * stride;
-
-  if (seg >= count - 1 || local <= dwellWidth) {
-    return {
-      fromIndex: seg,
-      toIndex: seg,
-      blend: 0,
-      burstIntensity: 0,
-      activeIndex: seg,
-    };
-  }
-
-  const rawT = clamp((local - dwellWidth) / Math.max(0.0001, transWidth), 0, 1);
-  const blend = smoothstep(rawT);
-  const burstIntensity = Math.sin(rawT * Math.PI);
-
-  return {
-    fromIndex: seg,
-    toIndex: seg + 1,
-    blend,
-    burstIntensity,
-    activeIndex: blend >= 0.5 ? seg + 1 : seg,
-  };
-}
-```
-
-### 3. Scroll Runway Sizing Formula (`minHeight`)
-Choose `minHeight` on the outer `<section>` so the scroll velocity feels natural and unhurried:
-- **Single-Beat Portal Dive or Curtain Morph:** `220vh – 270vh`
-- **Scatter-to-Converge or Object Dissection:** `280vh – 320vh`
-- **Multi-Item Stepped Showcase ($N$ items):** `${Math.max(320, count * 115)}vh` (approx. `110vh–125vh` per item so each item gets ~`75vh` of dwell runway and ~`40vh` of transition runway).
-
+### Scroll Runway Sizing Formula (`min-height`)
+- **Single-Beat Curtain / Wipe:** `240svh – 300svh`
+- **Interactive Scrubber / Dissection:** `320svh – 360svh`
+- **Multi-Beat Dive or Construction:** `480svh – 540svh`
+- **Multi-Item Stepped Showcase ($N$ items):** `${Math.max(340, count * 115)}svh`
