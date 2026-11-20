@@ -43,8 +43,10 @@ export function XrayForgeSection() {
   };
 
   const tiltSpan = 16;
-  const topX = clamp(scrubPct + tiltSpan, 0, 100);
-  const bottomX = clamp(scrubPct - tiltSpan, 0, 100);
+  const topX = scrubPct + tiltSpan;
+  const bottomX = scrubPct - tiltSpan;
+  // Exact X coordinate on the 23.6° line at y = 60% (top-3/5)
+  const handleX = topX + (bottomX - topX) * 0.6;
 
   return (
     <section
@@ -319,16 +321,11 @@ export function XrayForgeSection() {
                       setDragging(true);
                     }}
                     aria-label="Scrub across the card between CAD X-Ray and live metal surface"
-                    className="top-3/5 absolute z-20 flex -translate-x-1/2 -translate-y-1/2 cursor-ew-resize items-center gap-1.5 rounded-full border border-signal bg-charcoal-950 px-3 py-1 text-micro text-ink-primary shadow-paper"
-                    style={{ left: `${scrubPct}%` }}
+                    className="top-3/5 absolute z-20 flex size-7 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize items-center justify-center gap-0.5 rounded-full border border-signal bg-charcoal-950 text-micro text-signal shadow-paper transition-transform duration-150 ease-loot hover:scale-110"
+                    style={{ left: `${handleX}%` }}
                   >
-                    <span aria-hidden className="text-signal">
-                      ‹
-                    </span>
-                    <span>Scrub</span>
-                    <span aria-hidden className="text-signal">
-                      ›
-                    </span>
+                    <span aria-hidden>‹</span>
+                    <span aria-hidden>›</span>
                   </button>
                 </div>
               </div>

@@ -63,10 +63,10 @@ export function HeroDiveSection() {
     updateSlashFromPointer(event.clientX, event.currentTarget.getBoundingClientRect());
   };
 
-  // Signature 23.6° diagonal span across viewport height; unclamped 0..100 for edge-to-edge scrub.
+  // Signature 23.6° diagonal span across viewport height; unclamped so the angle never bends at edges.
   const tiltSpan = 21.8;
-  const topX = clamp(slashPct + tiltSpan, 0, 100);
-  const bottomX = clamp(slashPct - tiltSpan, 0, 100);
+  const topX = slashPct + tiltSpan;
+  const bottomX = slashPct - tiltSpan;
 
   return (
     <section
@@ -219,19 +219,21 @@ export function HeroDiveSection() {
             />
           </svg>
 
-          {/* Draggable Scrub Handle */}
+          {/* Precision Line Reticle Node (zero text clutter, locked to line midpoint) */}
           <button
             type="button"
             onPointerDown={(event) => {
               event.currentTarget.setPointerCapture(event.pointerId);
               setDragging(true);
             }}
-            aria-label="Drag left or right to scrub the diagonal slash across the screen"
-            className="pointer-events-auto absolute top-1/2 z-30 flex -translate-x-1/2 -translate-y-1/2 cursor-ew-resize items-center gap-2 rounded-full border border-signal bg-charcoal-950/95 px-3.5 py-1.5 text-micro font-medium text-ink-primary shadow-paper"
+            aria-label="Drag left or right to scrub the diagonal split across the screen"
+            className="pointer-events-auto absolute top-1/2 z-30 grid size-7 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize place-items-center"
             style={{ left: `${slashPct}%` }}
           >
-            <span aria-hidden className="size-1.5 rounded-full bg-signal" />
-            <span>Scrub</span>
+            <span
+              aria-hidden
+              className="size-2.5 rotate-45 border border-signal bg-charcoal-950 transition-transform duration-150 ease-loot hover:scale-125"
+            />
           </button>
         </div>
 
