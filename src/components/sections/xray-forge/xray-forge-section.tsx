@@ -38,15 +38,13 @@ export function XrayForgeSection() {
       return;
     }
     const rect = event.currentTarget.getBoundingClientRect();
-    const pct = clamp(((event.clientX - rect.left) / rect.width) * 100, 0, 100);
+    const pct = clamp(((event.clientX - rect.left) / rect.width) * 100, 2.2, 97.8);
     setScrubPct(Number(pct.toFixed(1)));
   };
 
   const tiltSpan = 16;
   const topX = scrubPct + tiltSpan;
   const bottomX = scrubPct - tiltSpan;
-  // Exact X coordinate on the 23.6° line at y = 60% (top-3/5)
-  const handleX = topX + (bottomX - topX) * 0.6;
 
   return (
     <section
@@ -218,25 +216,25 @@ export function XrayForgeSection() {
                           <circle cx="46" cy="93" r="3" fill="var(--color-signal-400)" />
 
                           <path
-                            d="M 68 83 H 126 L 154 54 H 256"
+                            d="M 68 83 H 104 L 136 52 H 208"
                             stroke="var(--color-signal-400)"
                             strokeOpacity={0.85}
                             strokeWidth={1.2}
                           />
                           <path
-                            d="M 68 90 H 256"
+                            d="M 68 90 H 116 L 128 82 H 208"
                             stroke="var(--color-ultraviolet-500)"
                             strokeOpacity={0.9}
                             strokeWidth={1.2}
                           />
                           <path
-                            d="M 68 97 H 134 L 160 124 H 256"
+                            d="M 68 96 H 122 L 140 112 H 208"
                             stroke="var(--color-alabaster-50)"
                             strokeOpacity={0.55}
                             strokeWidth={1.1}
                           />
                           <path
-                            d="M 68 103 H 120 L 146 154 H 256"
+                            d="M 68 102 H 108 L 146 142 H 208"
                             stroke="var(--color-ultraviolet-500)"
                             strokeOpacity={0.55}
                             strokeWidth={1}
@@ -244,15 +242,15 @@ export function XrayForgeSection() {
                           />
 
                           {activePreset.rules.map((rule, idx) => {
-                            const yCoords = [54, 90, 124, 154] as const;
-                            const y = yCoords[idx] ?? 54;
+                            const yCoords = [52, 82, 112, 142] as const;
+                            const y = yCoords[idx] ?? 52;
                             return (
                               <g key={rule.id}>
                                 <rect
-                                  x="256"
-                                  y={y - 3}
-                                  width="6"
-                                  height="6"
+                                  x="208"
+                                  y={y - 2.5}
+                                  width="5"
+                                  height="5"
                                   fill={
                                     idx === 0
                                       ? 'var(--color-signal-400)'
@@ -260,11 +258,11 @@ export function XrayForgeSection() {
                                   }
                                 />
                                 <text
-                                  x="268"
+                                  x="219"
                                   y={y + 3}
                                   fill="var(--color-alabaster-50)"
-                                  fillOpacity={0.78}
-                                  fontSize="9"
+                                  fillOpacity={0.82}
+                                  fontSize="8"
                                 >
                                   {rule.label.toUpperCase()} {rule.sharePct}%
                                 </text>
@@ -321,8 +319,8 @@ export function XrayForgeSection() {
                       setDragging(true);
                     }}
                     aria-label="Scrub across the card between CAD X-Ray and live metal surface"
-                    className="top-3/5 absolute z-20 flex size-7 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize items-center justify-center gap-0.5 rounded-full border border-signal bg-charcoal-950 text-micro text-signal shadow-paper transition-transform duration-150 ease-loot hover:scale-110"
-                    style={{ left: `${handleX}%` }}
+                    className="absolute top-1/2 z-20 flex size-6 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize items-center justify-center gap-0.5 rounded-full border border-signal bg-charcoal-950 text-micro text-signal shadow-paper transition-transform duration-150 ease-loot hover:scale-110"
+                    style={{ left: `${scrubPct}%` }}
                   >
                     <span aria-hidden>‹</span>
                     <span aria-hidden>›</span>

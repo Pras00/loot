@@ -52,7 +52,7 @@ export function HeroDiveSection() {
   const [dragging, setDragging] = useState(false);
 
   const updateSlashFromPointer = (clientX: number, rect: DOMRect): void => {
-    const pct = clamp(((clientX - rect.left) / rect.width) * 100, 0, 100);
+    const pct = clamp(((clientX - rect.left) / rect.width) * 100, 1.2, 98.8);
     setSlashPct(Number(pct.toFixed(1)));
   };
 
@@ -230,10 +230,9 @@ export function HeroDiveSection() {
             className="pointer-events-auto absolute top-1/2 z-30 grid size-7 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize place-items-center"
             style={{ left: `${slashPct}%` }}
           >
-            <span
-              aria-hidden
-              className="size-2.5 rotate-45 border border-signal bg-charcoal-950 transition-transform duration-150 ease-loot hover:scale-125"
-            />
+            <span className="grid size-6 place-items-center rounded-full border border-signal/80 bg-charcoal-950 transition-transform duration-150 ease-loot hover:scale-110">
+              <BrandMark className="size-3.5 text-signal" />
+            </span>
           </button>
         </div>
 
